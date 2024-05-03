@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppButtonStyle">
+    <style name="AppButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">200dp</item>
         <item name="android:layout_marginBottom">16dp</item>
@@ -11,15 +11,25 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">22sp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/black</item>
     </style>
     <style name="AppTextViewStyle">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_marginBottom">24dp</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
     <style name="SettingsTextStyle">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="SettingsMainTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
@@ -27,6 +37,19 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">22sp</item>
         <item name="android:layout_marginStart">@dimen/side_padding</item>
+    </style>
+    <style name="CustomButtonBackSettingsStyle" parent="Widget.MaterialComponents.Button">
+        <item name="app:iconTint">#1A1B22</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_width">51dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginStart">-2mm</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="iconSize">50dp</item>
+        <item name="iconTint">@color/black</item>
+        <item name="tools:ignore">SpeakableTextPresentCheck</item>
+
     </style>
     <style name="FrameSettingsStyle">
         <item name="android:layout_width">match_parent</item>
@@ -50,6 +73,19 @@
         <item name="android:layout_gravity">end</item>
         <item name="android:layout_marginTop">@dimen/layout_marginBottom</item>
         <item name="android:scaleType">centerCrop</item>
+    </style>
+    <style name="PurpleLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/purple</item>
+        <item name="android:padding">16dp</item>
+    </style>
+    <style name="WhiteBackgroundLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>
