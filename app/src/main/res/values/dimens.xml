@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="primary_text_size">24sp</dimen>
+    <dimen name="title_text_size">22sp</dimen>
+    <dimen name="text_size">16sp</dimen>
+    <dimen name="indentation">16dp</dimen>
+    <dimen name="label">1dp</dimen>
+    <dimen name="settings_padding">21dp</dimen>
+    <dimen name="button_size">50dp</dimen>
+    <dimen name="start_padding">20dp</dimen>
+    <dimen name="side_padding">16dp</dimen>
+    <dimen name="layout_marginTop">36dp</dimen>
+    <dimen name="padding_End">12dp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
+    <dimen name="layout_marginBottom">21dp</dimen>
+    <dimen name="layout_marginTopBottom">10dp</dimen>
+    <dimen name="layout_marginTopSettings">61dp</dimen>
+</resources>
