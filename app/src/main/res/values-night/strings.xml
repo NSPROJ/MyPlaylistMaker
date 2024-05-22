@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="playlist_maker">PlaylistMaker</string>
+    <string name="Y_P">https://practicum.yandex.ru/android-developer/</string>
+    <string name="my_mail">dekgold@gmail.com</string>
+    <string name="congrats_str">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="thanks_str">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="YP_urlOffer">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="search">"Поиск"</string>
 </resources>
