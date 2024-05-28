@@ -25,4 +25,12 @@
     <dimen name="buttonText_22sp">22sp</dimen>
     <dimen name="corners_16dp">16dp</dimen>
     <dimen name="bottom_main16dp">16dp</dimen>
+    <dimen name="ll_top_box_width_search">304dp</dimen>
+    <dimen name="ll_top_box_height_search">48dp</dimen>
+    <dimen name="text_edit_width_search">328dp</dimen>
+    <dimen name="text_edit_height_search">36dp</dimen>
+    <dimen name="text_edit_radius_search">8dp</dimen>
+    <dimen name="text_edit_width">288dp</dimen>
+    <dimen name="text_edit_margin_start">6dp</dimen>
+    <dimen name="text_edit_margin_top">8.5dp</dimen>
 </resources>

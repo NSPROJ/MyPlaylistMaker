@@ -1,3 +1,6 @@
+@file:Suppress("DEPRECATION")
+
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -33,16 +36,28 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    android {
+        packagingOptions {
+            exclude("kotlin/collections/collections.kotlin_builtins")
+            exclude("kotlin/coroutines/coroutines.kotlin_builtins")
+            exclude("kotlin/annotation/annotation.kotlin_builtins")
+            exclude("kotlin/reflect/reflect.kotlin_builtins")
+            exclude("META-INF/*.kotlin_module")
+            exclude("META-INF/*.kotlin_builtins")
+            exclude("DebugProbesKt.bin")
+        }
+    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.car.ui.lib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 }
