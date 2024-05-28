@@ -33,4 +33,9 @@
     <dimen name="text_edit_width">288dp</dimen>
     <dimen name="text_edit_margin_start">6dp</dimen>
     <dimen name="text_edit_margin_top">8.5dp</dimen>
+    <dimen name="rounded_corner_radius">2dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_4dp">4dp</dimen>
+    <dimen name="_11sp">11sp</dimen>
+    <dimen name="_0dp">0dp</dimen>
 </resources>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/settingsSize_61dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        style="@style/TrackImageViewStyle"
+        android:id="@+id/trackImageView"
+        android:src="@drawable/krest" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/trackTitleTextView"
+            style="@style/TrackTitleTextViewStyle"/>
+
+        <TextView
+            android:id="@+id/artistTimeTextView"
+            style="@style/ArtistTimeTextViewStyle"/>
+    </LinearLayout>
+
+    <ImageView
+        style="@style/ModeIconImageViewStyle"
+        android:id="@+id/modeImageView"
+        android:src="@drawable/mode"/>
+
+</LinearLayout>
