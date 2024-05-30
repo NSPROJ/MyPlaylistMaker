@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
 import android.content.Context
-import android.net.ConnectivityManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,7 +11,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var editText: EditText
@@ -28,10 +26,9 @@ class SearchActivity : AppCompatActivity() {
         val arrow2Button: ImageView = findViewById(R.id.arrow2)
         editText = findViewById(R.id.editText)
         clearButton = findViewById(R.id.clearButton)
-        arrow2Button.setOnClickListener { finish()}
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        arrow2Button.setOnClickListener { finish() }
         recyclerView = findViewById(R.id.searchResultsRecyclerView)
-        trackAdapter = TrackAdapter(TrackBase.getTrackList(), connectivityManager)
+        trackAdapter = TrackAdapter(TrackBase.getTrackList())
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
 

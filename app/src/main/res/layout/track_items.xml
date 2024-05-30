@@ -18,9 +18,29 @@
             android:id="@+id/trackTitleTextView"
             style="@style/TrackTitleTextViewStyle"/>
 
-        <TextView
-            android:id="@+id/artistTimeTextView"
-            style="@style/ArtistTimeTextViewStyle"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/ArtistNameTextViewStyle"
+                android:id="@+id/artistNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/artistname" />
+
+            <ImageView
+                style="@style/ImageDotStyle"
+                android:id="@+id/icImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/ArtistTimeTextViewStyle"
+                android:id="@+id/artistTimeTextView"
+                android:text="@string/_2_55"/>
+        </LinearLayout>
     </LinearLayout>
 
     <ImageView

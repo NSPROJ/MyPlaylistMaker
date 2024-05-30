@@ -17,4 +17,7 @@
     <string name="dot">%1$s • %2$s</string>
     <string name="yesterday">Yesterday (Remastered 2009)</string>
     <string name="beatles">The Beatles • 2:55</string>
+    <string name="artistname">Имя исполнителя</string>
+    <string name="ic_icon">ic icon</string>
+    <string name="_2_55">2:55</string>
 </resources>
