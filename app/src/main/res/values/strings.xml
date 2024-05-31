@@ -13,4 +13,11 @@
     <string name="congrats_str">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="thanks_str">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="YP_urlOffer">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="searchhardcore">%1$s • %2$s</string>
+    <string name="dot">%1$s • %2$s</string>
+    <string name="yesterday">Yesterday (Remastered 2009)</string>
+    <string name="beatles">The Beatles • 2:55</string>
+    <string name="artistname">Имя исполнителя</string>
+    <string name="ic_icon">ic icon</string>
+    <string name="_2_55">2:55</string>
 </resources>
