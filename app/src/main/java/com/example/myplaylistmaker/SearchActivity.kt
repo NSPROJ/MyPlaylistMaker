@@ -31,7 +31,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderText: TextView
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshButton: Button
-    private var trackList = arrayListOf<Track>()
+    private val trackList = arrayListOf<Track>()
     private var savedText: String = ""
     private var isRefreshing = false
 
@@ -58,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = trackAdapter
 
         editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val searchText = editText.text.toString()
                 if (searchText.isNotEmpty()) {
                     searchTracks(searchText)
@@ -74,9 +74,10 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
             clearButton.visibility = View.GONE
             updateTrackList(emptyList())
+            refreshButton.visibility = View.GONE
             recyclerView.visibility = View.GONE
-            placeholderText.visibility = View.VISIBLE
-            placeholderImage.visibility = View.VISIBLE
+            placeholderText.visibility = View.GONE
+            placeholderImage.visibility = View.GONE
         }
 
         val retrofit = Retrofit.Builder()
@@ -93,18 +94,6 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val searchText = s.toString()
                 clearButton.visibility = if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
-
-                if (searchText.isNotEmpty()) {
-                    searchTracks(searchText)
-                } else {
-                    updateTrackList(emptyList())
-                    placeholderText.visibility = View.VISIBLE
-                    placeholderImage.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                    if (!isRefreshing) {
-                        refreshButton.visibility = View.GONE
-                    }
-                }
             }
         })
 
@@ -141,14 +130,17 @@ class SearchActivity : AppCompatActivity() {
     private fun sendRequest(keyword: String) {
         apiService.search(keyword)?.enqueue(object: Callback<Tracks?> {
             override fun onResponse(call: Call<Tracks?>, response: Response<Tracks?>) {
-                if (response.code() == 200) {
+                if (response.isSuccessful) {
                     recyclerView.visibility = View.VISIBLE
                     placeholderText.visibility = View.GONE
                     placeholderImage.visibility = View.GONE
                     refreshButton.visibility = View.GONE
                     isRefreshing = false
-                    if (!response.body()?.results.isNullOrEmpty()) {
-                        updateTrackList(response.body()?.results)
+
+                    val results = response.body()?.results
+
+                    if (!results.isNullOrEmpty()) {
+                        updateTrackList(results)
                     } else {
                         showMessage(getString(R.string.nothing_to_show))
                         setPlaceholderImage(R.drawable.ic_placeholder_light, R.drawable.ic_placeholder_night)
@@ -170,7 +162,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun updateTrackList(newTrackList: List<Track>?) {
         trackList.clear()
-        newTrackList?.let { trackList.addAll(it) }
+        newTrackList?.let {
+            trackList.addAll(it)
+        }
         trackAdapter.notifyDataSetChanged()
     }
 

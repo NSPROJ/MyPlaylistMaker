@@ -1,5 +1,6 @@
 package com.example.myplaylistmaker
 
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -20,12 +21,19 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         trackName.text = item.trackName
         artist.text = item.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis)
+
+        val roundedCornersRadius = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            4f,
+            itemView.resources.displayMetrics
+        ).toInt()
+
         Glide.with(itemView)
             .load(item.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .centerCrop()
             .transform(
-                RoundedCorners(4)
+                RoundedCorners(roundedCornersRadius)
             )
             .into(trackImage)
     }
