@@ -32,23 +32,17 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/settingsSize_61dp"
             android:paddingTop="@dimen/settings_padding"
-            android:paddingBottom="@dimen/settings_padding">
+            android:paddingBottom="16dp">
 
-
-
-                <Switch
-                    android:id="@+id/set_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical|end"
-                    tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />
-
-            <TextView
-                style="@style/SettingsTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/title_dark_theme" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/themeSwitcher"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_gravity="start"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="@string/switch_text"
+                android:textSize="18sp"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </FrameLayout>
 
@@ -56,39 +50,41 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/settingsSize_61dp"
             android:paddingTop="@dimen/settings_padding"
-            android:paddingBottom="@dimen/settings_padding">
+            android:paddingBottom="19dp">
 
             <TextView
                 style="@style/SettingsTextStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:text="@string/title_share_app" />
+                android:layout_height="27dp"
+                android:layout_gravity="center|start"
+                android:text="@string/title_share_app"
+                tools:ignore="TextSizeCheck" />
 
             <ImageView
                 android:id="@+id/set_share"
                 style="@style/ImageStyle"
-                android:layout_gravity="end|center_vertical"
+                android:layout_gravity="end|center_horizontal"
                 android:src="@drawable/share" />
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settingsSize_61dp"
-            android:paddingTop="@dimen/settings_padding"
-            android:paddingBottom="@dimen/settings_padding">
+            android:paddingTop="17dp"
+            android:paddingBottom="13dp">
 
             <TextView
                 style="@style/SettingsTextStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/title_write_support" />
+                android:layout_height="30dp"
+                android:gravity="start|center_horizontal"
+                android:text="@string/title_write_support"
+                tools:ignore="TextSizeCheck" />
 
             <ImageView
                 android:id="@+id/set_support"
                 style="@style/ImageStyle"
-                android:layout_gravity="end"
+                android:layout_gravity="end|center_horizontal"
                 android:src="@drawable/support" />
 
         </FrameLayout>
@@ -96,20 +92,21 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settingsSize_61dp"
-            android:paddingTop="@dimen/settings_padding"
+            android:paddingTop="19dp"
             android:paddingBottom="@dimen/settings_padding">
 
             <TextView
                 style="@style/SettingsTextStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/title_user_agreement" />
+                android:layout_height="30dp"
+                android:gravity="start|center_horizontal"
+                android:text="@string/title_user_agreement"
+                tools:ignore="TextSizeCheck" />
 
             <ImageView
                 android:id="@+id/set_offer"
                 style="@style/ImageStyle"
-                android:layout_gravity="end"
+                android:layout_gravity="end|center_horizontal"
                 android:src="@drawable/mode" />
 
         </FrameLayout>
