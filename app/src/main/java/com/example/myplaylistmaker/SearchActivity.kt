@@ -25,8 +25,11 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var editText: EditText
     private lateinit var clearButton: ImageView
+    private lateinit var buttonClear: Button
+    private lateinit var historyTitle: TextView
     private lateinit var recyclerView: RecyclerView
     private lateinit var trackAdapter: TrackAdapter
+    private lateinit var historyAdapter: SearchHistoryAdapter
     private lateinit var apiService: ApiService
     private lateinit var placeholderText: TextView
     private lateinit var placeholderImage: ImageView
@@ -34,10 +37,7 @@ class SearchActivity : AppCompatActivity() {
     private val trackList = arrayListOf<Track>()
     private var savedText: String = ""
     private var isRefreshing = false
-
-    private fun isDarkThemeEnabled(): Boolean {
-        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    }
+    private lateinit var searchHistory: SearchHistory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,22 +46,40 @@ class SearchActivity : AppCompatActivity() {
         val arrow2Button: ImageView = findViewById(R.id.arrow2)
         editText = findViewById(R.id.editText)
         clearButton = findViewById(R.id.clearButton)
+        buttonClear = findViewById(R.id.button_clear)
+        historyTitle = findViewById(R.id.historyTitle)
         recyclerView = findViewById(R.id.searchResultsRecyclerView)
         placeholderText = findViewById(R.id.placeholderText)
         placeholderImage = findViewById(R.id.placeholderImage)
         refreshButton = findViewById(R.id.button_refresh)
 
-        arrow2Button.setOnClickListener { finish() }
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPreferences)
 
-        trackAdapter = TrackAdapter(trackList)
+        trackAdapter = TrackAdapter(trackList) { track -> onTrackSelected(track) }
+        historyAdapter = SearchHistoryAdapter(searchHistory.getHistory()) { track -> onTrackSelected(track) }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
+
+        recyclerView.visibility = View.GONE
+        historyTitle.visibility = View.GONE
+        clearButton.visibility = View.GONE
+
+        arrow2Button.setOnClickListener { finish() }
+
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                updateHistoryVisibility()
+            }
+        }
 
         editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val searchText = editText.text.toString()
                 if (searchText.isNotEmpty()) {
                     searchTracks(searchText)
+                    updateUIForResults()
                 }
                 true
             } else {
@@ -72,12 +90,18 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             editText.text.clear()
             hideKeyboard()
+            hideHistory()
             clearButton.visibility = View.GONE
-            updateTrackList(emptyList())
-            refreshButton.visibility = View.GONE
-            recyclerView.visibility = View.GONE
-            placeholderText.visibility = View.GONE
             placeholderImage.visibility = View.GONE
+            placeholderText.visibility = View.GONE
+            clearSearchFieldFocus()
+            updateHistoryVisibility()
+        }
+
+        buttonClear.setOnClickListener {
+            searchHistory.clearHistory()
+            historyAdapter.updateHistoryList(searchHistory.getHistory())
+            updateHistoryVisibility()
         }
 
         val retrofit = Retrofit.Builder()
@@ -88,9 +112,13 @@ class SearchActivity : AppCompatActivity() {
 
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString().isNotEmpty()) {
+                    hideHistory()
+                } else {
+                    updateHistoryVisibility()
+                }
+            }
             override fun afterTextChanged(s: Editable?) {
                 val searchText = s.toString()
                 clearButton.visibility = if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
@@ -109,8 +137,12 @@ class SearchActivity : AppCompatActivity() {
             editText.setText(savedText)
             if (savedText.isNotEmpty()) {
                 searchTracks(savedText)
+                updateUIForResults()
             }
         }
+
+        updateHistoryVisibility()
+        updateClearButtonVisibility()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -128,13 +160,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun sendRequest(keyword: String) {
-        apiService.search(keyword)?.enqueue(object: Callback<Tracks?> {
+        apiService.search(keyword)?.enqueue(object : Callback<Tracks?> {
             override fun onResponse(call: Call<Tracks?>, response: Response<Tracks?>) {
                 if (response.isSuccessful) {
                     recyclerView.visibility = View.VISIBLE
                     placeholderText.visibility = View.GONE
                     placeholderImage.visibility = View.GONE
                     refreshButton.visibility = View.GONE
+                    historyTitle.visibility = View.GONE
                     isRefreshing = false
 
                     val results = response.body()?.results
@@ -166,12 +199,15 @@ class SearchActivity : AppCompatActivity() {
             trackList.addAll(it)
         }
         trackAdapter.notifyDataSetChanged()
+        recyclerView.visibility = if (trackList.isEmpty()) View.GONE else View.VISIBLE
+        hideHistory()
     }
 
     private fun showMessage(text: String) {
         placeholderText.text = text
         placeholderText.visibility = View.VISIBLE
         placeholderImage.visibility = View.VISIBLE
+        buttonClear.visibility = View.GONE
         recyclerView.visibility = View.GONE
     }
 
@@ -185,6 +221,57 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showRefreshButton() {
         refreshButton.visibility = View.VISIBLE
+        buttonClear.visibility = View.GONE
         isRefreshing = true
+    }
+
+    private fun onTrackSelected(track: Track) {
+        searchHistory.addTrackToHistory(track)
+        historyAdapter.updateHistoryList(searchHistory.getHistory())
+        historyTitle.visibility = View.GONE
+        buttonClear.visibility = View.GONE
+    }
+
+    private fun updateHistoryVisibility() {
+        val isHistoryNotEmpty = searchHistory.getHistory().isNotEmpty()
+        val isSearchFieldEmpty = editText.text.toString().isEmpty()
+        val hasFocus = editText.hasFocus()
+
+        historyTitle.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
+        buttonClear.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
+
+        if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) {
+            recyclerView.adapter = historyAdapter
+            historyAdapter.updateHistoryList(searchHistory.getHistory())
+            recyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateClearButtonVisibility() {
+        clearButton.visibility = if (editText.text.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun updateUIForResults() {
+        buttonClear.visibility = View.GONE
+        historyTitle.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+        recyclerView.adapter = trackAdapter
+    }
+
+    private fun clearSearchFieldFocus() {
+        editText.clearFocus()
+        updateHistoryVisibility()
+    }
+
+    private fun hideHistory() {
+        historyTitle.visibility = View.GONE
+        buttonClear.visibility = View.GONE
+        if (recyclerView.adapter is SearchHistoryAdapter) {
+            recyclerView.visibility = View.GONE
+        }
+    }
+
+    private fun isDarkThemeEnabled(): Boolean {
+        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 }

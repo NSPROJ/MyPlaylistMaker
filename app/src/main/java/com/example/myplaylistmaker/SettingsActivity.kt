@@ -2,19 +2,32 @@ package com.example.myplaylistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
+
         val arrow1Button: ImageView = findViewById(R.id.arrow1)
         arrow1Button.setOnClickListener {
             finish()
         }
 
         val buttonShare = findViewById<ImageView>(R.id.set_share)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        themeSwitcher.isChecked = App.darkTheme
+
+        themeSwitcher.setOnCheckedChangeListener { switcher: CompoundButton, isChecked: Boolean ->
+            App.switchTheme(isChecked)
+        }
+
+
+
 
         buttonShare.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)

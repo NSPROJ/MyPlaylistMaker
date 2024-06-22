@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/WhiteBackgroundLinearLayoutStyle"
     android:visibility="visible"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:id="@+id/arrow2" />
 
         <TextView
-            style="@style/AppTitleSearchTextView"/>
+            style="@style/AppTitleSearchTextView" />
 
     </LinearLayout>
 
@@ -26,7 +27,7 @@
         style="@style/SearchLinearLayout">
 
         <ImageView
-            style="@style/SearchImageView"/>
+            style="@style/SearchImageView" />
 
         <EditText
             android:id="@+id/editText"
@@ -36,7 +37,7 @@
             style="@style/SearchEditText"
             tools:ignore="TouchTargetSizeCheck"
             android:maxLength="25"
-            android:maxLines="1"/>
+            android:maxLines="1" />
 
         <ImageView
             android:id="@+id/clearButton"
@@ -44,10 +45,47 @@
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResultsRecyclerView"
+    <TextView
+        style="@style/PlaceholderTextStyle"
+        android:id="@+id/historyTitle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:gravity="center_horizontal"
+        android:text="@string/u_searched"
+        android:textSize="19sp"
+        android:visibility="gone"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/_10dp"/>
+
+        <Button
+            style="@style/RefreshButton"
+            android:id="@+id/button_clear"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/button_size"
+            android:padding="6dp"
+            android:textAllCaps="false"
+            android:text="@string/clear_hist"
+            android:textSize="14sp"
+            android:fontFamily="@font/ys_display_medium"
+            app:cornerRadius="22dp" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/placeholderImage"
@@ -71,17 +109,18 @@
         android:visibility="gone" />
 
     <Button
-        style="@style/RefreshButton"
         android:id="@+id/button_refresh"
-        android:layout_width="115dp"
-        android:layout_height="50dp"
+        style="@style/RefreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/button_size"
-        android:padding="6dp"
-        android:textAllCaps="false"
-        android:text="@string/refresh"
-        android:textSize="14sp"
         android:fontFamily="@font/ys_display_medium"
-        app:cornerRadius="20dp"/>
+        android:padding="6dp"
+        android:text="@string/refresh"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:cornerRadius="20dp" />
 
 </LinearLayout>
