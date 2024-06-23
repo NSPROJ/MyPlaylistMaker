@@ -4,6 +4,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    kotlin("plugin.parcelize")
 }
 
 android {
@@ -36,6 +37,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildToolsVersion = "34.0.0"
     android {
         packagingOptions {
             exclude("kotlin/collections/collections.kotlin_builtins")

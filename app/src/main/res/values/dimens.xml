@@ -21,6 +21,7 @@
     <dimen name="settings_textSize_18sp">18sp</dimen>
     <dimen name="icon_size_24dp">24dp</dimen>
     <dimen name="mainSize_16dp">16dp</dimen>
+    <dimen name="placeholder_size">312dp</dimen>
     <dimen name="main_textSize_22sp">22sp</dimen>
     <dimen name="buttonText_22sp">22sp</dimen>
     <dimen name="corners_16dp">16dp</dimen>

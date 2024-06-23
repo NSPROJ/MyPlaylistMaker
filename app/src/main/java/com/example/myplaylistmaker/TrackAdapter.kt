@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class TrackAdapter(
     private val data: List<Track>,
-    private val onTrackSelected: (Track) -> Unit
-) : RecyclerView.Adapter<TrackViewHolder> () {
+    private val onTrackSelectedHistory: (Track) -> Unit
+) : RecyclerView.Adapter<TrackViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_items, parent, false)
         return TrackViewHolder(view)
@@ -17,7 +17,7 @@ class TrackAdapter(
         val track = data[position]
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            onTrackSelected(track)
+            onTrackSelectedHistory(track)
         }
     }
 
