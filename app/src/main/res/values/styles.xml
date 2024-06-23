@@ -252,5 +252,8 @@
     <style name="MediaTextStyle2">
     <item name="android:textColor">@color/YP_black</item>
     </style>
+    <style name="WhiteBackgroundLayoutStyle">
+        <item name="android:background">@color/white</item>
+    </style>
 
 </resources>

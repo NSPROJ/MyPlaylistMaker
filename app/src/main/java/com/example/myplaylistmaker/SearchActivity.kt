@@ -212,14 +212,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onTrackSelected(track: Track) {
         val intent = Intent(this, MediaActivity::class.java).apply {
-            putExtra("trackName", track.trackName)
-            putExtra("artistName", track.artistName)
-            putExtra("trackTimeMillis", track.trackTimeMillis)
-            putExtra("artworkUrl100", track.artworkUrl100)
-            putExtra("collectionName", track.collectionName)
-            putExtra("releaseDate", track.releaseDate)
-            putExtra("primaryGenreName", track.primaryGenreName)
-            putExtra("country", track.country)
+            putExtra("track", track)
         }
         startActivity(intent)
     }

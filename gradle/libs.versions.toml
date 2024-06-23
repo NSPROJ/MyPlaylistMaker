@@ -9,6 +9,7 @@ espressoCore = "3.5.1"
 appcompat = "1.6.1"
 kotlinBom = "1.8.22"
 kotlinBomVersion = "2.0.0"
+kotlinxParcelizeRuntime = "1.5.1"
 material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
@@ -19,21 +20,22 @@ retrofit = "2.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+compiler = { module = "com.github.bumptech.glide:compiler", version = "4.16.0" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide = { module = "com.github.bumptech.glide:glide", version = "4.16.0" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.0" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
 kotlin-bom-v200 = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBomVersion" }
+kotlinx-parcelize-runtime = { module = "org.jetbrains.kotlinx:kotlinx-parcelize-runtime", version.ref = "kotlinxParcelizeRuntime" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
 compose-preview-renderer = { group = "com.android.tools.compose", name = "compose-preview-renderer", version.ref = "composePreviewRenderer" }
-material-v161 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+material-v161 = { module = "com.google.android.material:material", version = "1.12.0" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
