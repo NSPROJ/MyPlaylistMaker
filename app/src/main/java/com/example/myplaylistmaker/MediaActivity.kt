@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -95,10 +96,7 @@ class MediaActivity : AppCompatActivity() {
 
     private fun loadArtwork() {
         val albumImageView = findViewById<ImageView>(R.id.albumCover)
-        val placeholderImageView = findViewById<ImageView>(R.id.imageViewPlaceholder)
-
-        placeholderImageView.visibility = View.VISIBLE
-        albumImageView.visibility = View.GONE
+        val placeholderDrawable = ContextCompat.getDrawable(this, R.drawable.placeholdertrue)
 
         Glide.with(this)
             .load(getCoverArtwork())
@@ -109,19 +107,17 @@ class MediaActivity : AppCompatActivity() {
             )
             .into(object : CustomTarget<Drawable>() {
                 override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                    placeholderImageView.visibility = View.GONE
                     albumImageView.setImageDrawable(resource)
                     albumImageView.visibility = View.VISIBLE
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
-                    placeholderImageView.visibility = View.VISIBLE
                     albumImageView.visibility = View.GONE
                 }
 
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    placeholderImageView.visibility = View.VISIBLE
-                    albumImageView.visibility = View.GONE
+                    albumImageView.setImageDrawable(placeholderDrawable)
+                    albumImageView.visibility = View.VISIBLE
                 }
             })
     }
