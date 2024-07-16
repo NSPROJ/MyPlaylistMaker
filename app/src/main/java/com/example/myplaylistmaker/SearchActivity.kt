@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -43,6 +45,20 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        initializeViews()
+        setupAdapters()
+        setupListeners()
+        setupApiService()
+
+        if (savedInstanceState != null) {
+            handleSavedInstanceState(savedInstanceState)
+        }
+
+        updateHistoryVisibility()
+        updateClearButtonVisibility()
+    }
+
+    private fun initializeViews() {
         val arrow2Button: ImageView = findViewById(R.id.arrow2)
         editText = findViewById(R.id.editText)
         clearButton = findViewById(R.id.clearButton)
@@ -56,18 +72,23 @@ class SearchActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
 
-        trackAdapter = TrackAdapter(trackList) { track -> onTrackSelected(track) }
+        arrow2Button.setOnClickListener { finish() }
+    }
+
+    private fun setupAdapters() {
+        trackAdapter = TrackAdapter(trackList) { track -> onTrackSelectedHistory(track) }
         historyAdapter = SearchHistoryAdapter(searchHistory.getHistory()) { track -> onTrackSelected(track) }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
 
+        // Hide initially
         recyclerView.visibility = View.GONE
         historyTitle.visibility = View.GONE
         clearButton.visibility = View.GONE
+    }
 
-        arrow2Button.setOnClickListener { finish() }
-
+    private fun setupListeners() {
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 updateHistoryVisibility()
@@ -88,33 +109,21 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearButton.setOnClickListener {
-            editText.text.clear()
-            hideKeyboard()
-            hideHistory()
-            clearButton.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
-            placeholderText.visibility = View.GONE
-            clearSearchFieldFocus()
+            clearSearchField()
             updateHistoryVisibility()
         }
 
         buttonClear.setOnClickListener {
-            searchHistory.clearHistory()
-            historyAdapter.updateHistoryList(searchHistory.getHistory())
-            updateHistoryVisibility()
+            clearSearchHistory()
         }
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        apiService = retrofit.create(ApiService::class.java)
 
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.toString().isNotEmpty()) {
                     hideHistory()
+                    placeholderText.visibility = View.GONE
+                    placeholderImage.visibility = View.GONE
                 } else {
                     updateHistoryVisibility()
                 }
@@ -131,18 +140,24 @@ class SearchActivity : AppCompatActivity() {
                 searchTracks(searchText)
             }
         }
+    }
 
-        if (savedInstanceState != null) {
-            savedText = savedInstanceState.getString("savedText", "")
-            editText.setText(savedText)
-            if (savedText.isNotEmpty()) {
-                searchTracks(savedText)
-                updateUIForResults()
-            }
+    private fun setupApiService() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://itunes.apple.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        apiService = retrofit.create(ApiService::class.java)
+    }
+
+    private fun handleSavedInstanceState(savedInstanceState: Bundle) {
+        savedText = savedInstanceState.getString("savedText", "")
+        editText.setText(savedText)
+        if (savedText.isNotEmpty()) {
+            searchTracks(savedText)
+            updateUIForResults()
         }
-
-        updateHistoryVisibility()
-        updateClearButtonVisibility()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -163,32 +178,24 @@ class SearchActivity : AppCompatActivity() {
         apiService.search(keyword)?.enqueue(object : Callback<Tracks?> {
             override fun onResponse(call: Call<Tracks?>, response: Response<Tracks?>) {
                 if (response.isSuccessful) {
-                    recyclerView.visibility = View.VISIBLE
-                    placeholderText.visibility = View.GONE
-                    placeholderImage.visibility = View.GONE
-                    refreshButton.visibility = View.GONE
-                    historyTitle.visibility = View.GONE
-                    isRefreshing = false
-
                     val results = response.body()?.results
 
                     if (!results.isNullOrEmpty()) {
                         updateTrackList(results)
                     } else {
-                        showMessage(getString(R.string.nothing_to_show))
-                        setPlaceholderImage(R.drawable.ic_placeholder_light, R.drawable.ic_placeholder_night)
+                        displayMessageWithPlaceholder(
+                            getString(R.string.nothing_to_show),
+                            R.drawable.ic_placeholder_light,
+                            R.drawable.ic_placeholder_night
+                        )
                     }
                 } else {
-                    showRefreshButton()
-                    showMessage(getString(R.string.internet_issue))
-                    setPlaceholderImage(R.drawable.ic_placeholder_no_light, R.drawable.ic_placeholder_no_night)
+                    displayErrorMessage()
                 }
             }
 
             override fun onFailure(call: Call<Tracks?>, t: Throwable) {
-                showRefreshButton()
-                showMessage(getString(R.string.internet_issue))
-                setPlaceholderImage(R.drawable.ic_placeholder_no_light, R.drawable.ic_placeholder_no_night)
+                displayErrorMessage()
             }
         })
     }
@@ -199,37 +206,50 @@ class SearchActivity : AppCompatActivity() {
             trackList.addAll(it)
         }
         trackAdapter.notifyDataSetChanged()
-        recyclerView.visibility = if (trackList.isEmpty()) View.GONE else View.VISIBLE
+        recyclerView.isVisible = trackList.isNotEmpty()
         hideHistory()
+    }
+
+    private fun onTrackSelected(track: Track) {
+        val intent = Intent(this, MediaActivity::class.java).apply {
+            putExtra("track", track)
+        }
+        startActivity(intent)
+    }
+
+    private fun displayMessageWithPlaceholder(message: String, lightImage: Int, darkImage: Int) {
+        showMessage(message)
+        setPlaceholderImage(lightImage, darkImage)
+    }
+
+    private fun displayErrorMessage() {
+        showMessage(getString(R.string.internet_issue))
+        setPlaceholderImage(R.drawable.ic_placeholder_no_light, R.drawable.ic_placeholder_no_night)
+        showRefreshButton()
     }
 
     private fun showMessage(text: String) {
         placeholderText.text = text
         placeholderText.visibility = View.VISIBLE
         placeholderImage.visibility = View.VISIBLE
-        buttonClear.visibility = View.GONE
+        refreshButton.visibility = View.GONE
         recyclerView.visibility = View.GONE
     }
 
     private fun setPlaceholderImage(resourceLight: Int, resourceNight: Int) {
-        if (isDarkThemeEnabled()) {
-            placeholderImage.setImageResource(resourceNight)
-        } else {
-            placeholderImage.setImageResource(resourceLight)
-        }
+        placeholderImage.setImageResource(if (isDarkThemeEnabled()) resourceNight else resourceLight)
     }
 
     private fun showRefreshButton() {
         refreshButton.visibility = View.VISIBLE
-        buttonClear.visibility = View.GONE
         isRefreshing = true
     }
 
-    private fun onTrackSelected(track: Track) {
+    private fun onTrackSelectedHistory(track: Track) {
         searchHistory.addTrackToHistory(track)
         historyAdapter.updateHistoryList(searchHistory.getHistory())
         historyTitle.visibility = View.GONE
-        buttonClear.visibility = View.GONE
+        onTrackSelected(track)
     }
 
     private fun updateHistoryVisibility() {
@@ -237,14 +257,31 @@ class SearchActivity : AppCompatActivity() {
         val isSearchFieldEmpty = editText.text.toString().isEmpty()
         val hasFocus = editText.hasFocus()
 
-        historyTitle.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
-        buttonClear.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
-
         if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) {
             recyclerView.adapter = historyAdapter
             historyAdapter.updateHistoryList(searchHistory.getHistory())
             recyclerView.visibility = View.VISIBLE
         }
+
+        historyTitle.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
+        buttonClear.visibility = if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) View.VISIBLE else View.GONE
+    }
+
+    private fun clearSearchField() {
+        editText.text.clear()
+        hideKeyboard()
+        hideHistory()
+        clearButton.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        placeholderText.isVisible = false
+        refreshButton.visibility = View.GONE
+        clearSearchFieldFocus()
+    }
+
+    private fun clearSearchHistory() {
+        searchHistory.clearHistory()
+        historyAdapter.updateHistoryList(searchHistory.getHistory())
+        updateHistoryVisibility()
     }
 
     private fun updateClearButtonVisibility() {
@@ -270,7 +307,6 @@ class SearchActivity : AppCompatActivity() {
             recyclerView.visibility = View.GONE
         }
     }
-
     private fun isDarkThemeEnabled(): Boolean {
         return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }

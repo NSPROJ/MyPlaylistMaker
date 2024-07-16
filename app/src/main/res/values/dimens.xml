@@ -21,6 +21,7 @@
     <dimen name="settings_textSize_18sp">18sp</dimen>
     <dimen name="icon_size_24dp">24dp</dimen>
     <dimen name="mainSize_16dp">16dp</dimen>
+    <dimen name="placeholder_size">312dp</dimen>
     <dimen name="main_textSize_22sp">22sp</dimen>
     <dimen name="buttonText_22sp">22sp</dimen>
     <dimen name="corners_16dp">16dp</dimen>
@@ -39,4 +40,11 @@
     <dimen name="_11sp">11sp</dimen>
     <dimen name="_0dp">0dp</dimen>
     <dimen name="_25dp">25dp</dimen>
+    <dimen name="_40dp">40dp</dimen>
+    <dimen name="_8dp">8dp</dimen>
+    <dimen name="_20sp">20sp</dimen>
+    <dimen name="_32dp">32dp</dimen>
+    <dimen name="_14sp">14sp</dimen>
+    <dimen name="_86dp">86dp</dimen>
+    <dimen name="_100dp">100dp</dimen>
 </resources>
