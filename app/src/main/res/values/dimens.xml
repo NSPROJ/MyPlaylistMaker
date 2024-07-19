@@ -47,4 +47,6 @@
     <dimen name="_14sp">14sp</dimen>
     <dimen name="_86dp">86dp</dimen>
     <dimen name="_100dp">100dp</dimen>
+    <dimen name="_150dp">150dp</dimen>
+    <dimen name="_50dp">50dp</dimen>
 </resources>

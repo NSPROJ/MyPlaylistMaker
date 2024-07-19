@@ -2,7 +2,10 @@ package com.example.myplaylistmaker
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,36 +24,118 @@ import java.util.Locale
 class MediaActivity : AppCompatActivity() {
 
     private lateinit var track: Track
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var playButton: ImageView
+    private lateinit var pauseButton: ImageView
+    private lateinit var progressTextView: TextView
+    private var isPlaying = false
+    private var handler = Handler(Looper.getMainLooper())
+    private var savedPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media)
 
-        findViewById<ImageView>(R.id.imageView).setOnClickListener { finish() }
+        playButton = findViewById(R.id.imageView3)
+        pauseButton = findViewById(R.id.imageView3pause)
+        progressTextView = findViewById(R.id.time_dur)
+
+        playButton.setOnClickListener { onPlayButtonClick() }
+        pauseButton.setOnClickListener { onPauseButtonClick() }
+
+        findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
 
         track = intent.getParcelableExtra("track") ?: getSavedTrack()
+
+        if (intent.hasExtra("track")) {
+            saveTrack(track)
+        }
 
         updateUI()
     }
 
-    private fun getSavedTrack(): Track {
-        val sharedPreferences = getSharedPreferences("MediaActivityPrefs", Context.MODE_PRIVATE)
-        return Track(
-            trackName = sharedPreferences.getString("trackName", "")!!,
-            artistName = sharedPreferences.getString("artistName", "")!!,
-            trackTimeMillis = sharedPreferences.getLong("trackTimeMillis", 0),
-            artworkUrl100 = sharedPreferences.getString("artworkUrl100", "")!!,
-            trackId = sharedPreferences.getLong("trackId", 0),
-            collectionName = sharedPreferences.getString("collectionName", null),
-            releaseDate = sharedPreferences.getString("releaseDate", "")!!,
-            primaryGenreName = sharedPreferences.getString("primaryGenreName", "")!!,
-            country = sharedPreferences.getString("country", "")
-        )
+    private fun onPlayButtonClick() {
+        if (isPlaying) {
+            pausePlayback()
+        } else {
+            startPlayback()
+        }
+    }
+
+    private fun onPauseButtonClick() {
+        pausePlayback()
+    }
+
+    private fun startPlayback() {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(track.previewUrl)
+            prepare()
+            seekTo(savedPosition)
+            start()
+            setOnCompletionListener {
+                onPlaybackComplete()
+            }
+        }
+        isPlaying = true
+        playButton.visibility = View.INVISIBLE
+        pauseButton.visibility = View.VISIBLE
+
+        handler.post(updateProgressRunnable)
+    }
+
+    private val updateProgressRunnable = object : Runnable {
+        override fun run() {
+            mediaPlayer?.let {
+                val currentPosition = it.currentPosition / 1000
+                val minutes = currentPosition / 60
+                val seconds = currentPosition % 60
+                progressTextView.text = String.format("%02d:%02d", minutes, seconds)
+                handler.postDelayed(this, 1000)
+            }
+        }
+    }
+
+    private fun pausePlayback() {
+        mediaPlayer?.pause()
+        savedPosition = mediaPlayer?.currentPosition ?: 0
+        isPlaying = false
+        pauseButton.visibility = View.GONE
+        playButton.visibility = View.VISIBLE
+    }
+
+    private fun onPlaybackComplete() {
+        isPlaying = false
+        savedPosition = 0
+        pauseButton.visibility = View.GONE
+        playButton.visibility = View.VISIBLE
+        handler.removeCallbacks(updateProgressRunnable)
+        progressTextView.text = ""
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        handler.removeCallbacks(updateProgressRunnable)
     }
 
     override fun onResume() {
         super.onResume()
         updateUI()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isPlaying) {
+            pausePlayback()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (isPlaying) {
+            pausePlayback()
+        }
+        super.onBackPressed()
     }
 
     private fun updateUI() {
@@ -121,6 +206,7 @@ class MediaActivity : AppCompatActivity() {
                 }
             })
     }
+
     private fun getCoverArtwork(): String {
         return track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     }
@@ -129,4 +215,36 @@ class MediaActivity : AppCompatActivity() {
         return (dp * resources.displayMetrics.density).toInt()
     }
 
+    private fun saveTrack(track: Track) {
+        val sharedPreferences = getSharedPreferences("MediaActivityPrefs", Context.MODE_PRIVATE)
+        with (sharedPreferences.edit()) {
+            putString("trackName", track.trackName)
+            putString("artistName", track.artistName)
+            putLong("trackTimeMillis", track.trackTimeMillis)
+            putString("artworkUrl100", track.artworkUrl100)
+            putLong("trackId", track.trackId)
+            putString("collectionName", track.collectionName)
+            putString("releaseDate", track.releaseDate)
+            putString("primaryGenreName", track.primaryGenreName)
+            putString("country", track.country)
+            putString("previewUrl", track.previewUrl)
+            apply()
+        }
+    }
+
+    private fun getSavedTrack(): Track {
+        val sharedPreferences = getSharedPreferences("MediaActivityPrefs", Context.MODE_PRIVATE)
+        return Track(
+            trackName = sharedPreferences.getString("trackName", "")!!,
+            artistName = sharedPreferences.getString("artistName", "")!!,
+            trackTimeMillis = sharedPreferences.getLong("trackTimeMillis", 0),
+            artworkUrl100 = sharedPreferences.getString("artworkUrl100", "")!!,
+            trackId = sharedPreferences.getLong("trackId", 0),
+            collectionName = sharedPreferences.getString("collectionName", null),
+            releaseDate = sharedPreferences.getString("releaseDate", "")!!,
+            primaryGenreName = sharedPreferences.getString("primaryGenreName", "")!!,
+            country = sharedPreferences.getString("country", ""),
+            previewUrl = sharedPreferences.getString("previewUrl","")!!
+        )
+    }
 }

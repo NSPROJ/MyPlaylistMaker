@@ -241,7 +241,7 @@
         <item name="android:textSize">14sp</item>
     </style>
     <style name="PlayStyle">
-        <item name="srcCompat">@drawable/vectorplay_light</item>
+        <item name="srcCompat">@drawable/vectorplaydark</item>
     </style>
     <style name="FavStyle">
         <item name="srcCompat">@drawable/vectorfav_light</item>
@@ -254,6 +254,9 @@
     </style>
     <style name="WhiteBackgroundLayoutStyle">
         <item name="android:background">@color/white</item>
+    </style>
+    <style name="PauseStyle">
+        <item name="srcCompat">@drawable/pause_night</item>
     </style>
 
 </resources>
