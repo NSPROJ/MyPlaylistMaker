@@ -86,7 +86,6 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = SearchHistoryAdapter(searchHistory.getHistory()) { track -> onTrackSelected(track) }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = trackAdapter
 
         recyclerView.visibility = View.GONE
         historyTitle.visibility = View.GONE
@@ -124,7 +123,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 updateHistoryVisibility()
-                clearButton.visibility = if (s.toString().isNotEmpty()) View.VISIBLE else View.GONE
+                clearButton.isVisible = s.toString().isNotEmpty()
             }
         })
 
@@ -210,15 +209,21 @@ class SearchActivity : AppCompatActivity() {
         trackList.clear()
         newTrackList?.let { trackList.addAll(it) }
         trackAdapter.notifyDataSetChanged()
+        recyclerView.adapter = trackAdapter
         recyclerView.isVisible = trackList.isNotEmpty()
         hideHistory()
     }
 
+    private var lastClickTime = 0L
     private fun onTrackSelected(track: Track) {
-        val intent = Intent(this, MediaActivity::class.java).apply {
-            putExtra("track", track)
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime > 1000) {
+            lastClickTime = currentTime
+            val intent = Intent(this, MediaActivity::class.java).apply {
+                putExtra("track", track)
+            }
+            startActivity(intent)
         }
-        startActivity(intent)
     }
 
     private fun onTrackSelectedHistory(track: Track) {
@@ -310,11 +315,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun toggleViewsVisibility(visibility: Int) {
-        buttonClear.visibility = visibility
-        historyTitle.visibility = visibility
-        recyclerView.visibility = visibility
-        placeholderText.visibility = visibility
-        placeholderImage.visibility = visibility
+        if (recyclerView.adapter is TrackAdapter || recyclerView.adapter == null) {
+            buttonClear.visibility = visibility
+            historyTitle.visibility = visibility
+            recyclerView.visibility = visibility
+            placeholderText.visibility = visibility
+            placeholderImage.visibility = visibility
+        }
     }
 
     private fun clearSearchFieldFocus() {
