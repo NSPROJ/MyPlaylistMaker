@@ -47,6 +47,19 @@ class MediaActivity : AppCompatActivity() {
     private var handler = Handler(Looper.getMainLooper())
     private var savedPosition = 0
 
+    private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
+        val debounceInterval = 1000L
+        var lastClickTime = 0L
+
+        return View.OnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime >= debounceInterval) {
+                lastClickTime = currentTime
+                onClick()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media)
@@ -55,8 +68,8 @@ class MediaActivity : AppCompatActivity() {
         pauseButton = findViewById(R.id.imageView3pause)
         progressTextView = findViewById(R.id.time_dur)
 
-        playButton.setOnClickListener { onPlayButtonClick() }
-        pauseButton.setOnClickListener { onPauseButtonClick() }
+        playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
+        pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
 
         findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
 
@@ -95,6 +108,7 @@ class MediaActivity : AppCompatActivity() {
         isPlaying = true
         playButton.visibility = View.INVISIBLE
         pauseButton.visibility = View.VISIBLE
+        progressTextView.visibility = View.VISIBLE
 
         handler.post(updateProgressRunnable)
     }
@@ -126,6 +140,7 @@ class MediaActivity : AppCompatActivity() {
         playButton.visibility = View.VISIBLE
         handler.removeCallbacks(updateProgressRunnable)
         progressTextView.text = getString(R.string.zero_time)
+        progressTextView.visibility = View.VISIBLE
     }
 
     override fun onDestroy() {

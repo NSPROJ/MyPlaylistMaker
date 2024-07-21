@@ -214,15 +214,19 @@ class SearchActivity : AppCompatActivity() {
         hideHistory()
     }
 
-    private var lastClickTime = 0L
-    private fun onTrackSelected(track: Track) {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastClickTime > 1000) {
-            lastClickTime = currentTime
-            val intent = Intent(this, MediaActivity::class.java).apply {
-                putExtra("track", track)
+    private fun onTrackSelected(track: Track): View.OnClickListener {
+        val debounceInterval = 1000L
+        var lastClickTime = 0L
+
+        return View.OnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime >= debounceInterval) {
+                lastClickTime = currentTime
+                val intent = Intent(this, MediaActivity::class.java).apply {
+                    putExtra("track", track)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
     }
 
