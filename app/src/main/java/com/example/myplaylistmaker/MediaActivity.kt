@@ -2,7 +2,10 @@ package com.example.myplaylistmaker
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -20,37 +23,149 @@ import java.util.Locale
 @Suppress("DEPRECATION")
 class MediaActivity : AppCompatActivity() {
 
+    companion object {
+        const val TRACK_KEY = "track"
+        const val PREFS_NAME = "MediaActivityPrefs"
+        const val TRACK_NAME_KEY = "trackName"
+        const val ARTIST_NAME_KEY = "artistName"
+        const val TRACK_TIME_MILLIS_KEY = "trackTimeMillis"
+        const val ARTWORK_URL_KEY = "artworkUrl100"
+        const val TRACK_ID_KEY = "trackId"
+        const val COLLECTION_NAME_KEY = "collectionName"
+        const val RELEASE_DATE_KEY = "releaseDate"
+        const val PRIMARY_GENRE_NAME_KEY = "primaryGenreName"
+        const val COUNTRY_KEY = "country"
+        const val PREVIEW_URL_KEY = "previewUrl"
+    }
+
     private lateinit var track: Track
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var playButton: ImageView
+    private lateinit var pauseButton: ImageView
+    private lateinit var progressTextView: TextView
+    private var isPlaying = false
+    private var handler = Handler(Looper.getMainLooper())
+    private var savedPosition = 0
+
+    private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
+        val debounceInterval = 1000L
+        var lastClickTime = 0L
+
+        return View.OnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime >= debounceInterval) {
+                lastClickTime = currentTime
+                onClick()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media)
 
-        findViewById<ImageView>(R.id.imageView).setOnClickListener { finish() }
+        playButton = findViewById(R.id.imageView3)
+        pauseButton = findViewById(R.id.imageView3pause)
+        progressTextView = findViewById(R.id.time_dur)
 
-        track = intent.getParcelableExtra("track") ?: getSavedTrack()
+        playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
+        pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
+
+        findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
+
+        track = intent.getParcelableExtra(TRACK_KEY) ?: getSavedTrack()
+
+        if (intent.hasExtra(TRACK_KEY)) {
+            saveTrack(track)
+        }
 
         updateUI()
     }
 
-    private fun getSavedTrack(): Track {
-        val sharedPreferences = getSharedPreferences("MediaActivityPrefs", Context.MODE_PRIVATE)
-        return Track(
-            trackName = sharedPreferences.getString("trackName", "")!!,
-            artistName = sharedPreferences.getString("artistName", "")!!,
-            trackTimeMillis = sharedPreferences.getLong("trackTimeMillis", 0),
-            artworkUrl100 = sharedPreferences.getString("artworkUrl100", "")!!,
-            trackId = sharedPreferences.getLong("trackId", 0),
-            collectionName = sharedPreferences.getString("collectionName", null),
-            releaseDate = sharedPreferences.getString("releaseDate", "")!!,
-            primaryGenreName = sharedPreferences.getString("primaryGenreName", "")!!,
-            country = sharedPreferences.getString("country", "")
-        )
+    private fun onPlayButtonClick() {
+        if (isPlaying) {
+            pausePlayback()
+        } else {
+            startPlayback()
+        }
+    }
+
+    private fun onPauseButtonClick() {
+        pausePlayback()
+    }
+
+    private fun startPlayback() {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(track.previewUrl)
+            prepare()
+            seekTo(savedPosition)
+            start()
+            setOnCompletionListener {
+                onPlaybackComplete()
+            }
+        }
+        isPlaying = true
+        playButton.visibility = View.INVISIBLE
+        pauseButton.visibility = View.VISIBLE
+        progressTextView.visibility = View.VISIBLE
+
+        handler.post(updateProgressRunnable)
+    }
+
+    private val updateProgressRunnable = object : Runnable {
+        override fun run() {
+            mediaPlayer?.let {
+                val currentPosition = it.currentPosition / 1000
+                val minutes = currentPosition / 60
+                val seconds = currentPosition % 60
+                progressTextView.text = String.format("%02d:%02d", minutes, seconds)
+                handler.postDelayed(this, 1000)
+            }
+        }
+    }
+
+    private fun pausePlayback() {
+        mediaPlayer?.pause()
+        savedPosition = mediaPlayer?.currentPosition ?: 0
+        isPlaying = false
+        pauseButton.visibility = View.GONE
+        playButton.visibility = View.VISIBLE
+    }
+
+    private fun onPlaybackComplete() {
+        isPlaying = false
+        savedPosition = 0
+        pauseButton.visibility = View.GONE
+        playButton.visibility = View.VISIBLE
+        handler.removeCallbacks(updateProgressRunnable)
+        progressTextView.text = getString(R.string.zero_time)
+        progressTextView.visibility = View.VISIBLE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        handler.removeCallbacks(updateProgressRunnable)
     }
 
     override fun onResume() {
         super.onResume()
         updateUI()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isPlaying) {
+            pausePlayback()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (isPlaying) {
+            pausePlayback()
+        }
+        super.onBackPressed()
     }
 
     private fun updateUI() {
@@ -121,6 +236,7 @@ class MediaActivity : AppCompatActivity() {
                 }
             })
     }
+
     private fun getCoverArtwork(): String {
         return track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     }
@@ -129,4 +245,36 @@ class MediaActivity : AppCompatActivity() {
         return (dp * resources.displayMetrics.density).toInt()
     }
 
+    private fun saveTrack(track: Track) {
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        with (sharedPreferences.edit()) {
+            putString(TRACK_NAME_KEY, track.trackName)
+            putString(ARTIST_NAME_KEY, track.artistName)
+            putLong(TRACK_TIME_MILLIS_KEY, track.trackTimeMillis)
+            putString(ARTWORK_URL_KEY, track.artworkUrl100)
+            putLong(TRACK_ID_KEY, track.trackId)
+            putString(COLLECTION_NAME_KEY, track.collectionName)
+            putString(RELEASE_DATE_KEY, track.releaseDate)
+            putString(PRIMARY_GENRE_NAME_KEY, track.primaryGenreName)
+            putString(COUNTRY_KEY, track.country)
+            putString(PREVIEW_URL_KEY, track.previewUrl)
+            apply()
+        }
+    }
+
+    private fun getSavedTrack(): Track {
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return Track(
+            trackName = sharedPreferences.getString(TRACK_NAME_KEY, "")!!,
+            artistName = sharedPreferences.getString(ARTIST_NAME_KEY, "")!!,
+            trackTimeMillis = sharedPreferences.getLong(TRACK_TIME_MILLIS_KEY, 0),
+            artworkUrl100 = sharedPreferences.getString(ARTWORK_URL_KEY, "")!!,
+            trackId = sharedPreferences.getLong(TRACK_ID_KEY, 0),
+            collectionName = sharedPreferences.getString(COLLECTION_NAME_KEY, null),
+            releaseDate = sharedPreferences.getString(RELEASE_DATE_KEY, "")!!,
+            primaryGenreName = sharedPreferences.getString(PRIMARY_GENRE_NAME_KEY, "")!!,
+            country = sharedPreferences.getString(COUNTRY_KEY, ""),
+            previewUrl = sharedPreferences.getString(PREVIEW_URL_KEY,"")!!
+        )
+    }
 }
