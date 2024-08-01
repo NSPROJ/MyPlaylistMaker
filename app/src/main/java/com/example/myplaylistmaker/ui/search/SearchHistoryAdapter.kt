@@ -1,12 +1,14 @@
-package com.example.myplaylistmaker
+package com.example.myplaylistmaker.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myplaylistmaker.R
+import com.example.myplaylistmaker.domain.models.TrackDto
 
 class SearchHistoryAdapter(
-    private var historyList: ArrayList<Track>,
-    private val onTrackSelected: (Track) -> Unit
+    private var historyList: ArrayList<TrackDto>,
+    private val onTrackSelected: (TrackDto) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -25,7 +27,7 @@ class SearchHistoryAdapter(
         return historyList.size
     }
 
-    fun updateHistoryList(newHistoryList: ArrayList<Track>) {
+    fun updateHistoryList(newHistoryList: ArrayList<TrackDto>) {
         historyList = newHistoryList
         notifyDataSetChanged()
     }
