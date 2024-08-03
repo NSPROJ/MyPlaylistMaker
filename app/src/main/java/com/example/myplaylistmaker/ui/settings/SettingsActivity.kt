@@ -1,12 +1,12 @@
 package com.example.myplaylistmaker.ui.settings
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myplaylistmaker.Creator
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.data.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -22,51 +22,50 @@ class SettingsActivity : AppCompatActivity() {
         val buttonShare = findViewById<ImageView>(R.id.set_share)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
-        themeSwitcher.isChecked = App.darkTheme
+        val switchThemeInteractor = Creator.provideSwitchThemeInteractor()
+        themeSwitcher.isChecked = switchThemeInteractor.getSharedPreferencesThemeValue()
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            switchThemeInteractor.sharedPreferencesEdit(checked)
+            switchThemeInteractor.switchTheme(checked)
 
-        themeSwitcher.setOnCheckedChangeListener { switcher: CompoundButton, isChecked: Boolean ->
-            App.switchTheme(isChecked)
-        }
-
-
-
-
-        buttonShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            val message = getString(R.string.Y_P)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
-            val chooserIntent = Intent.createChooser(shareIntent, getString(R.string.share_string))
-            startActivity(chooserIntent)
-        }
-
-        val buttonSup = findViewById<ImageView>(R.id.set_support)
-        val mySupportEmail = getString(R.string.my_mail)
-        buttonSup.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
-                putExtra(
-                    Intent.EXTRA_EMAIL,
-                    arrayOf(mySupportEmail),
-                )
-                putExtra(
-                    Intent.EXTRA_SUBJECT,
-                    getString(R.string.congrats_str),
-                )
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    getString(R.string.thanks_str),
-                )
+            buttonShare.setOnClickListener {
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                val message = getString(R.string.Y_P)
+                shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+                val chooserIntent =
+                    Intent.createChooser(shareIntent, getString(R.string.share_string))
+                startActivity(chooserIntent)
             }
-            startActivity(intent)
-        }
 
-        val buttonOffer = findViewById<ImageView>(R.id.set_offer)
+            val buttonSup = findViewById<ImageView>(R.id.set_support)
+            val mySupportEmail = getString(R.string.my_mail)
+            buttonSup.setOnClickListener {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:")
+                    putExtra(
+                        Intent.EXTRA_EMAIL,
+                        arrayOf(mySupportEmail),
+                    )
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.congrats_str),
+                    )
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        getString(R.string.thanks_str),
+                    )
+                }
+                startActivity(intent)
+            }
 
-        buttonOffer.setOnClickListener {
-            val url = Uri.parse(getString(R.string.YP_urlOffer))
-            val intent = Intent(Intent.ACTION_VIEW, url)
-            startActivity(intent)
+            val buttonOffer = findViewById<ImageView>(R.id.set_offer)
+
+            buttonOffer.setOnClickListener {
+                val url = Uri.parse(getString(R.string.YP_urlOffer))
+                val intent = Intent(Intent.ACTION_VIEW, url)
+                startActivity(intent)
+            }
         }
     }
 }

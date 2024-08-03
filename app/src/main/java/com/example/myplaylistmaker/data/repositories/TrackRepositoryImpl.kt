@@ -1,11 +1,10 @@
-package com.example.myplaylistmaker.data
+package com.example.myplaylistmaker.data.repositories
 
 import android.content.Context
-import com.example.myplaylistmaker.domain.models.TrackDto
+import com.example.myplaylistmaker.domain.domain.Track
+import com.example.myplaylistmaker.domain.domain.repositories.TrackRepository
 
-class TrackRepositoryImpl(private val context: Context) :
-    TrackRepository {
-
+class TrackRepositoryImpl(private val context: Context) : TrackRepository {
     companion object {
         const val PREFS_NAME = "MediaActivityPrefs"
         const val TRACK_NAME_KEY = "trackName"
@@ -20,7 +19,7 @@ class TrackRepositoryImpl(private val context: Context) :
         const val PREVIEW_URL_KEY = "previewUrl"
     }
 
-    override fun saveTrack(track: TrackDto) {
+    override fun saveTrack(track: Track) {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
             putString(TRACK_NAME_KEY, track.trackName)
@@ -37,9 +36,9 @@ class TrackRepositoryImpl(private val context: Context) :
         }
     }
 
-    override fun getSavedTrack(): TrackDto {
+    override fun getSavedTrack(): Track {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return TrackDto(
+        return Track(
             trackName = sharedPreferences.getString(TRACK_NAME_KEY, "")!!,
             artistName = sharedPreferences.getString(ARTIST_NAME_KEY, "")!!,
             trackTimeMillis = sharedPreferences.getLong(TRACK_TIME_MILLIS_KEY, 0),

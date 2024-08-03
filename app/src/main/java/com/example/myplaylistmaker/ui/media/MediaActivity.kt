@@ -16,11 +16,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.example.myplaylistmaker.Creator
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.data.TrackRepositoryImpl
-import com.example.myplaylistmaker.domain.models.TrackDto
-import com.example.myplaylistmaker.domain.models.api.TrackInteractor
-import com.example.myplaylistmaker.presentation.TrackInteractorImpl
+import com.example.myplaylistmaker.domain.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -31,8 +29,7 @@ class MediaActivity : AppCompatActivity() {
         const val TRACK_KEY = "track"
     }
 
-
-    private lateinit var trackDto: TrackDto
+    private lateinit var track: Track
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
@@ -40,8 +37,6 @@ class MediaActivity : AppCompatActivity() {
     private var isPlaying = false
     private var handler = Handler(Looper.getMainLooper())
     private var savedPosition = 0
-
-    private lateinit var trackInteractor: TrackInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,21 +46,22 @@ class MediaActivity : AppCompatActivity() {
         pauseButton = findViewById(R.id.imageView3pause)
         progressTextView = findViewById(R.id.time_dur)
 
-        trackInteractor = TrackInteractorImpl(TrackRepositoryImpl(this))
+        val trackInteractor = Creator.provideTrackInteractor(this)
 
         playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
         pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
 
         findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
 
-        trackDto = intent.getParcelableExtra(TRACK_KEY) ?: trackInteractor.getSavedTrack()
+        track = intent.getParcelableExtra(TRACK_KEY) ?: trackInteractor.getSavedTrack()
 
         if (intent.hasExtra(TRACK_KEY)) {
-            trackInteractor.saveTrack(trackDto)
+            trackInteractor.saveTrack(track)
         }
 
         updateUI()
     }
+
 
     private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
         val debounceInterval = 1000L
@@ -95,7 +91,7 @@ class MediaActivity : AppCompatActivity() {
     private fun startPlayback() {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
-            setDataSource(trackDto.previewUrl)
+            setDataSource(track.previewUrl)
             prepare()
             seekTo(savedPosition)
             start()
@@ -167,27 +163,27 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        findViewById<TextView>(R.id.songTitle).text = trackDto.trackName
-        findViewById<TextView>(R.id.artistName).text = trackDto.artistName
+        findViewById<TextView>(R.id.songTitle).text = track.trackName
+        findViewById<TextView>(R.id.artistName).text = track.artistName
         val trackDuration =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackDto.trackTimeMillis)
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
         findViewById<TextView>(R.id.songDuration).apply {
             text = trackDuration
-            tag = trackDto.trackTimeMillis
+            tag = track.trackTimeMillis
         }
 
         val albumNameTextView = findViewById<TextView>(R.id.albumName)
-        if (trackDto.collectionName.isEmpty()) {
+        if (track.collectionName.isEmpty()) {
             albumNameTextView.visibility = View.GONE
         } else {
             albumNameTextView.visibility = View.VISIBLE
-            albumNameTextView.text = trackDto.collectionName
+            albumNameTextView.text = track.collectionName
         }
 
-        val formattedReleaseDate = formatReleaseDate(trackDto.releaseDate)
+        val formattedReleaseDate = formatReleaseDate(track.releaseDate)
         findViewById<TextView>(R.id.year).text = formattedReleaseDate
-        findViewById<TextView>(R.id.genre).text = trackDto.primaryGenreName
-        findViewById<TextView>(R.id.country1).text = trackDto.country
+        findViewById<TextView>(R.id.genre).text = track.primaryGenreName
+        findViewById<TextView>(R.id.country1).text = track.country
 
         loadArtwork()
     }
@@ -239,7 +235,7 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun getCoverArtwork(): String {
-        return trackDto.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+        return track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     }
 
     private fun dpToPx(dp: Int): Int {
