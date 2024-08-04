@@ -10,5 +10,8 @@ class App : Application() {
         val sharedPreferencesInteractor = Creator.provideSwitchThemeInteractor()
         val darkTheme = Creator.provideSwitchThemeRepository().getSharedPreferencesThemeValue()
         sharedPreferencesInteractor.switchTheme(darkTheme)
+        val sharedPreferences = Creator.provideSharedPreferences("app_prefs")
+        Creator.initialize(sharedPreferences)
     }
 }
+

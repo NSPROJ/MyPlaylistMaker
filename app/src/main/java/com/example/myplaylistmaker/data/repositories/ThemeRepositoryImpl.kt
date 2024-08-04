@@ -2,7 +2,7 @@ package com.example.myplaylistmaker.data.repositories
 
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.myplaylistmaker.Creator
-import com.example.myplaylistmaker.domain.domain.repositories.ThemeRepository
+import com.example.myplaylistmaker.domain.repositories.ThemeRepository
 
 class ThemeRepositoryImp : ThemeRepository {
     companion object {

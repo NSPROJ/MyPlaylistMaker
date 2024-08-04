@@ -1,7 +1,7 @@
-package com.example.myplaylistmaker.domain.domain.interactors
+package com.example.myplaylistmaker.domain.interactors
 
-import com.example.myplaylistmaker.domain.domain.api.SearchInteractor
-import com.example.myplaylistmaker.domain.domain.repositories.SearchRepository
+import com.example.myplaylistmaker.domain.api.SearchInteractor
+import com.example.myplaylistmaker.domain.repositories.SearchRepository
 import java.util.concurrent.Executors
 
 class SearchInteractorImpl(private val repository: SearchRepository) : SearchInteractor {

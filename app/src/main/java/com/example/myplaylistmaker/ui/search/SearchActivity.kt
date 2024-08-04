@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.Creator
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.domain.domain.Track
+import com.example.myplaylistmaker.domain.Track
 import com.example.myplaylistmaker.ui.adapters.TrackAdapter
 import com.example.myplaylistmaker.ui.media.MediaActivity
 
@@ -38,10 +38,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshButton: Button
     private lateinit var progressBar: ProgressBar
-    private val trackList = arrayListOf<Track>()
     private var savedText: String = ""
+    private val trackList = arrayListOf<Track>()
     private var isRefreshing = false
-    private lateinit var searchHistory: SearchHistory
     private var searchHandler: Handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
 
@@ -73,19 +72,19 @@ class SearchActivity : AppCompatActivity() {
         refreshButton = findViewById(R.id.button_refresh)
         progressBar = findViewById(R.id.progressBar)
 
-        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
-
+        Creator.repository
         arrow2Button.setOnClickListener { finish() }
     }
 
     private fun setupAdapters() {
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+
         trackAdapter = TrackAdapter(trackList) { track -> onTrackSelectedHistory(track) }
-        historyAdapter =
-            SearchHistoryAdapter(searchHistory.getHistory()) { track -> onTrackSelected(track) }
+        historyAdapter = SearchHistoryAdapter(searchHistoryInteractor.getHistory()) { track ->
+            onTrackSelected(track)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-
         recyclerView.visibility = View.GONE
         historyTitle.visibility = View.GONE
         clearButton.visibility = View.GONE
@@ -144,8 +143,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        private const val SAVED_TEXT_KEY = "savedText"
+        private const val CLICK_INTERVAL = 1000L
+    }
+
     private fun handleSavedInstanceState(savedInstanceState: Bundle) {
-        savedText = savedInstanceState.getString("savedText", "")
+        savedText = savedInstanceState.getString(SAVED_TEXT_KEY, "")
         editText.setText(savedText)
         if (savedText.isNotEmpty()) {
             searchTracks(savedText)
@@ -202,7 +206,7 @@ class SearchActivity : AppCompatActivity() {
     private var lastClickTime = 0L
     private fun onTrackSelected(track: Track) {
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastClickTime > 1000) {
+        if (currentTime - lastClickTime > CLICK_INTERVAL) {
             lastClickTime = currentTime
             val intent = Intent(this, MediaActivity::class.java).apply {
                 putExtra("track", track)
@@ -212,8 +216,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun onTrackSelectedHistory(track: Track) {
-        searchHistory.addTrackToHistory(track)
-        historyAdapter.updateHistoryList(searchHistory.getHistory())
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+        searchHistoryInteractor.addTrackToHistory(track)
+        historyAdapter.updateHistoryList(searchHistoryInteractor.getHistory())
         historyTitle.visibility = View.GONE
         onTrackSelected(track)
     }
@@ -249,13 +254,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateHistoryVisibility() {
-        val isHistoryNotEmpty = searchHistory.getHistory().isNotEmpty()
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+        val isHistoryNotEmpty = searchHistoryInteractor.getHistory().isNotEmpty()
         val isSearchFieldEmpty = editText.text.toString().isEmpty()
         val hasFocus = editText.hasFocus()
 
         if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) {
             recyclerView.adapter = historyAdapter
-            historyAdapter.updateHistoryList(searchHistory.getHistory())
+            historyAdapter.updateHistoryList(searchHistoryInteractor.getHistory())
             recyclerView.visibility = View.VISIBLE
             historyTitle.visibility = View.VISIBLE
             buttonClear.visibility = View.VISIBLE
@@ -280,8 +286,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearSearchHistory() {
-        searchHistory.clearHistory()
-        historyAdapter.updateHistoryList(searchHistory.getHistory())
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+        searchHistoryInteractor.clearHistory()
+        historyAdapter.updateHistoryList(searchHistoryInteractor.getHistory())
         updateHistoryVisibility()
     }
 

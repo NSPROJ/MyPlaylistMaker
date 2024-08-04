@@ -1,4 +1,4 @@
-package com.example.myplaylistmaker.domain.domain.repositories
+package com.example.myplaylistmaker.domain.repositories
 
 interface ThemeRepository {
     fun switchTheme(darkThemeEnabled: Boolean) {

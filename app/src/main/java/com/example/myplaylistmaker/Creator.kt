@@ -3,18 +3,22 @@ package com.example.myplaylistmaker
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.myplaylistmaker.data.network.RetrofitNetworkClient
+import com.example.myplaylistmaker.data.repositories.SearchHistoryRepositoryImpl
 import com.example.myplaylistmaker.data.repositories.SearchRepositoryImpl
 import com.example.myplaylistmaker.data.repositories.ThemeRepositoryImp
 import com.example.myplaylistmaker.data.repositories.TrackRepositoryImpl
-import com.example.myplaylistmaker.domain.domain.Track
-import com.example.myplaylistmaker.domain.domain.api.SearchInteractor
-import com.example.myplaylistmaker.domain.domain.api.ThemeInteractor
-import com.example.myplaylistmaker.domain.domain.api.TrackInteractor
-import com.example.myplaylistmaker.domain.domain.interactors.SearchInteractorImpl
-import com.example.myplaylistmaker.domain.domain.interactors.ThemeInteractorImpl
-import com.example.myplaylistmaker.domain.domain.interactors.TrackInteractorImpl
-import com.example.myplaylistmaker.domain.domain.repositories.SearchRepository
-import com.example.myplaylistmaker.domain.domain.repositories.ThemeRepository
+import com.example.myplaylistmaker.domain.Track
+import com.example.myplaylistmaker.domain.api.SearchHistoryInteractor
+import com.example.myplaylistmaker.domain.api.SearchInteractor
+import com.example.myplaylistmaker.domain.api.ThemeInteractor
+import com.example.myplaylistmaker.domain.api.TrackInteractor
+import com.example.myplaylistmaker.domain.interactors.SearchHistoryInteractorImpl
+import com.example.myplaylistmaker.domain.interactors.SearchInteractorImpl
+import com.example.myplaylistmaker.domain.interactors.ThemeInteractorImpl
+import com.example.myplaylistmaker.domain.interactors.TrackInteractorImpl
+import com.example.myplaylistmaker.domain.repositories.SearchHistoryRepository
+import com.example.myplaylistmaker.domain.repositories.SearchRepository
+import com.example.myplaylistmaker.domain.repositories.ThemeRepository
 
 object Creator {
     private lateinit var application: App
@@ -63,5 +67,19 @@ object Creator {
     fun provideTrackInteractor(context: Context): TrackInteractor {
         val repository = TrackRepositoryImpl(context)
         return TrackInteractorImpl(repository)
+    }
+
+    private lateinit var sharedPreferences: SharedPreferences
+
+    fun initialize(sharedPreferences: SharedPreferences) {
+        this.sharedPreferences = sharedPreferences
+    }
+
+    val repository: SearchHistoryRepository by lazy {
+        SearchHistoryRepositoryImpl(sharedPreferences)
+    }
+
+    fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
+        return SearchHistoryInteractorImpl(repository)
     }
 }

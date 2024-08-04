@@ -1,8 +1,8 @@
 package com.example.myplaylistmaker.data.repositories
 
 import android.content.Context
-import com.example.myplaylistmaker.domain.domain.Track
-import com.example.myplaylistmaker.domain.domain.repositories.TrackRepository
+import com.example.myplaylistmaker.domain.Track
+import com.example.myplaylistmaker.domain.repositories.TrackRepository
 
 class TrackRepositoryImpl(private val context: Context) : TrackRepository {
     companion object {

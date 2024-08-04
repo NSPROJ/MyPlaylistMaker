@@ -18,7 +18,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.myplaylistmaker.Creator
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.domain.domain.Track
+import com.example.myplaylistmaker.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

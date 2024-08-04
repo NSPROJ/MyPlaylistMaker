@@ -3,8 +3,8 @@ package com.example.myplaylistmaker.data.repositories
 import com.example.myplaylistmaker.data.dto.SearchRequest
 import com.example.myplaylistmaker.data.dto.SearchResponse
 import com.example.myplaylistmaker.data.network.NetworkClient
-import com.example.myplaylistmaker.domain.domain.Track
-import com.example.myplaylistmaker.domain.domain.repositories.SearchRepository
+import com.example.myplaylistmaker.domain.Track
+import com.example.myplaylistmaker.domain.repositories.SearchRepository
 
 class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRepository {
 
