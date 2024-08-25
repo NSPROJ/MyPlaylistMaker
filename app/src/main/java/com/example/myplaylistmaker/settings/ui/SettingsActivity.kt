@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myplaylistmaker.R
@@ -14,9 +13,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val viewModel: ShareViewModel by viewModels {
-        ShareViewModel.Factory(resources)
-    }
+    private lateinit var viewModel: ShareViewModel
 
     private val themeViewModel by lazy {
         ViewModelProvider(this)[ThemeViewModel::class.java]
@@ -25,6 +22,8 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
+
+        viewModel = ViewModelProvider(this, ShareViewModel.Factory())[ShareViewModel::class.java]
 
         val arrow1Button: ImageView = findViewById(R.id.arrow1)
         arrow1Button.setOnClickListener {

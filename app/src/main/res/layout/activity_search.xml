@@ -16,7 +16,8 @@
 
         <ImageView
             style="@style/AppArrowImageView"
-            android:id="@+id/arrow2" />
+            android:id="@+id/arrow2"
+            tools:ignore="ContentDescription" />
 
         <TextView
             style="@style/AppTitleSearchTextView" />
@@ -27,7 +28,8 @@
         style="@style/SearchLinearLayout">
 
         <ImageView
-            style="@style/SearchImageView" />
+            style="@style/SearchImageView"
+            tools:ignore="ContentDescription" />
 
         <EditText
             android:id="@+id/editText"
@@ -41,7 +43,7 @@
         <ImageView
             android:id="@+id/clearButton"
             style="@style/ClearSearchImageView"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
     </LinearLayout>
 
     <TextView
@@ -95,13 +97,14 @@
     </LinearLayout>
 
     <ImageView
+        style="@style/PlaceholderNothingStyle"
         android:id="@+id/placeholderImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="102dp"
-        android:src="@drawable/ic_placeholder_light"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
 
     <TextView
         style="@style/PlaceholderTextStyle"

@@ -2,7 +2,6 @@ package com.example.myplaylistmaker.search.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,7 +20,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.creator.Creator
 import com.example.myplaylistmaker.player.ui.MediaActivity
 import com.example.myplaylistmaker.search.adapters.SearchHistoryAdapter
 import com.example.myplaylistmaker.search.adapters.TrackAdapter
@@ -80,17 +78,11 @@ class SearchActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is SearchViewModel.UIState.ShowResults -> updateUIForResults()
-                is SearchViewModel.UIState.ShowPlaceholder -> displayMessageWithPlaceholder(
-                    state.message,
-                    state.imageResLight,
-                    state.imageResDark
+                is SearchViewModel.UIState.ShowEmptyResult -> displayMessageWithPlaceholder(
+                    getString(R.string.nothing_to_show)
                 )
 
-                is SearchViewModel.UIState.ShowError -> displayErrorMessage(
-                    state.message,
-                    state.imageResLight,
-                    state.imageResDark
-                )
+                is SearchViewModel.UIState.ShowError -> displayErrorMessage()
             }
         }
 
@@ -111,23 +103,22 @@ class SearchActivity : AppCompatActivity() {
         refreshButton = findViewById(R.id.button_refresh)
         progressBar = findViewById(R.id.progressBar)
 
-        Creator.repository
         arrow2Button.setOnClickListener { finish() }
     }
 
     private fun setupAdapters() {
-        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
-
         trackAdapter = TrackAdapter(trackList) { track -> onTrackSelectedHistory(track) }
-        historyAdapter = SearchHistoryAdapter(searchHistoryInteractor.getHistory()) { track ->
+        historyAdapter = SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList()) { track ->
             onTrackSelected(track)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.visibility = View.GONE
-        historyTitle.visibility = View.GONE
-        clearButton.visibility = View.GONE
-        progressBar.visibility = View.GONE
+        recyclerView.adapter = trackAdapter
+
+        viewModel.searchHistory.observe(this) { history ->
+            historyAdapter.updateHistoryList(history)
+            updateHistoryVisibility()
+        }
     }
 
     private fun setupListeners() {
@@ -198,7 +189,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("savedText", editText.text.toString())
+        outState.putString(SAVED_TEXT_KEY, editText.text.toString())
     }
 
     private fun hideKeyboard() {
@@ -236,14 +227,14 @@ class SearchActivity : AppCompatActivity() {
         onTrackSelected(track)
     }
 
-    private fun displayMessageWithPlaceholder(message: String, lightImage: Int, darkImage: Int) {
+    private fun displayMessageWithPlaceholder(message: String) {
         showMessage(message)
-        setPlaceholderImage(lightImage, darkImage)
+        placeholderImage.setImageResource(R.drawable.ic_placeholder_light)
     }
 
-    private fun displayErrorMessage(message: String, imageResLight: Int, imageResDark: Int) {
+    private fun displayErrorMessage() {
         showMessage(getString(R.string.internet_issue))
-        setPlaceholderImage(R.drawable.ic_placeholder_no_light, R.drawable.ic_placeholder_no_night)
+        placeholderImage.setImageResource(R.drawable.ic_placeholder_no_light)
         showRefreshButton()
     }
 
@@ -257,32 +248,29 @@ class SearchActivity : AppCompatActivity() {
         historyTitle.visibility = View.GONE
     }
 
-    private fun setPlaceholderImage(resourceLight: Int, resourceNight: Int) {
-        placeholderImage.setImageResource(if (isDarkThemeEnabled()) resourceNight else resourceLight)
-    }
-
     private fun showRefreshButton() {
         refreshButton.visibility = View.VISIBLE
         isRefreshing = true
     }
 
     private fun updateHistoryVisibility() {
-        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
-        val isHistoryNotEmpty = searchHistoryInteractor.getHistory().isNotEmpty()
+        val isHistoryNotEmpty = viewModel.searchHistory.value?.isNotEmpty() == true
         val isSearchFieldEmpty = editText.text.toString().isEmpty()
         val hasFocus = editText.hasFocus()
 
         if (isHistoryNotEmpty && isSearchFieldEmpty && hasFocus) {
             recyclerView.adapter = historyAdapter
-            historyAdapter.updateHistoryList(searchHistoryInteractor.getHistory())
             recyclerView.visibility = View.VISIBLE
             historyTitle.visibility = View.VISIBLE
             buttonClear.visibility = View.VISIBLE
         } else {
             historyTitle.visibility = View.GONE
             buttonClear.visibility = View.GONE
-            if (recyclerView.adapter is SearchHistoryAdapter) {
+            recyclerView.adapter = trackAdapter
+            if (trackList.isEmpty()) {
                 recyclerView.visibility = View.GONE
+            } else {
+                recyclerView.visibility = View.VISIBLE
             }
         }
     }
@@ -343,9 +331,5 @@ class SearchActivity : AppCompatActivity() {
         historyTitle.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
         recyclerView.adapter = trackAdapter
-    }
-
-    private fun isDarkThemeEnabled(): Boolean {
-        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 }

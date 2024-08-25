@@ -18,8 +18,6 @@ import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.viewmodels.PlayerViewModel
 import com.example.myplaylistmaker.player.viewmodels.TrackViewModel
 import com.example.myplaylistmaker.search.domain.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Suppress("DEPRECATION")
 class MediaActivity : AppCompatActivity() {
@@ -28,7 +26,6 @@ class MediaActivity : AppCompatActivity() {
         const val TRACK_KEY = "track"
     }
 
-    private lateinit var track: Track
     private lateinit var viewModel: PlayerViewModel
     private lateinit var trackViewModel: TrackViewModel
     private lateinit var playButton: ImageView
@@ -53,23 +50,26 @@ class MediaActivity : AppCompatActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[TrackViewModel::class.java]
 
-        playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
-        pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
+        val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
+        trackViewModel.initTrack(intentTrack)
 
-        findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
+        trackViewModel.track.observe(this) { track ->
+            viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
 
-        trackViewModel.trackInteractor.observe(this) { trackInteractor ->
-            track = intent.getParcelableExtra(TRACK_KEY) ?: trackInteractor.getSavedTrack()
-            if (intent.hasExtra(TRACK_KEY)) {
-                trackInteractor.saveTrack(track)
-            }
+            playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
+            pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
+
+            findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
+
 
             viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
 
             observeViewModel()
             updateUI()
+
         }
     }
+
 
     private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
         val debounceInterval = 1000L
@@ -108,10 +108,8 @@ class MediaActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.currentPosition.observe(this) { currentPosition ->
-            val minutes = currentPosition / 60
-            val seconds = currentPosition % 60
-            progressTextView.text = String.format("%02d:%02d", minutes, seconds)
+        viewModel.formattedCurrentPosition.observe(this) { formattedTime ->
+            progressTextView.text = formattedTime
         }
 
         viewModel.trackDuration.observe(this) { duration ->
@@ -128,6 +126,8 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
+        val track = trackViewModel.track.value ?: return
+
         findViewById<TextView>(R.id.songTitle).text = track.trackName
         findViewById<TextView>(R.id.artistName).text = track.artistName
         findViewById<TextView>(R.id.albumName).apply {
@@ -139,26 +139,11 @@ class MediaActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<TextView>(R.id.year).text = formatReleaseDate(track.releaseDate)
+        findViewById<TextView>(R.id.year).text = trackViewModel.formatReleaseDate(track.releaseDate)
         findViewById<TextView>(R.id.genre).text = track.primaryGenreName
         findViewById<TextView>(R.id.country1).text = track.country
 
         loadArtwork()
-    }
-
-    private fun formatReleaseDate(date: String): String {
-        return try {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-            val parsedDate = parser.parse(date)
-            if (parsedDate != null) {
-                formatter.format(parsedDate)
-            } else {
-                date
-            }
-        } catch (e: Exception) {
-            date
-        }
     }
 
     private fun loadArtwork() {
@@ -166,7 +151,7 @@ class MediaActivity : AppCompatActivity() {
         val placeholderDrawable = ContextCompat.getDrawable(this, R.drawable.placeholdertrue)
 
         Glide.with(this)
-            .load(getCoverArtwork())
+            .load(trackViewModel.getCoverArtwork())
             .apply(
                 RequestOptions()
                     .transform(RoundedCorners(dpToPx(8)))
@@ -190,10 +175,6 @@ class MediaActivity : AppCompatActivity() {
                     albumImageView.visibility = View.VISIBLE
                 }
             })
-    }
-
-    private fun getCoverArtwork(): String {
-        return track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     }
 
     private fun dpToPx(dp: Int): Int {

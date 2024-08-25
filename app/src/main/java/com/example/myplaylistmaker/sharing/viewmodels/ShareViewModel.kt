@@ -1,11 +1,10 @@
 package com.example.myplaylistmaker.sharing.viewmodels
 
-import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.myplaylistmaker.creator.Creator.provideMainViewModel
+import com.example.myplaylistmaker.creator.Creator
 import com.example.myplaylistmaker.sharing.domain.OfferInteractor
 import com.example.myplaylistmaker.sharing.domain.ShareInteractor
 import com.example.myplaylistmaker.sharing.domain.SupportIntentData
@@ -45,10 +44,15 @@ class ShareViewModel(
         _offerIntentData.value = offerInteractor.getOfferUrl()
     }
 
-    class Factory(private val resources: Resources) : ViewModelProvider.Factory {
+    class Factory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return provideMainViewModel(resources) as T
+            val repository = Creator.provideRepository()
+            return ShareViewModel(
+                repository.provideShareInteractor(),
+                repository.provideSupportInteractor(),
+                repository.provideOfferInteractor()
+            ) as T
         }
     }
 }
