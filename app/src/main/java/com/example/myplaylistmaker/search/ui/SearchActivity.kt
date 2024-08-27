@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.ui.MediaActivity
-import com.example.myplaylistmaker.search.adapters.SearchHistoryAdapter
-import com.example.myplaylistmaker.search.adapters.TrackAdapter
+import com.example.myplaylistmaker.search.ui.adapters.SearchHistoryAdapter
+import com.example.myplaylistmaker.search.ui.adapters.TrackAdapter
 import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.viewmodels.SearchViewModel
 

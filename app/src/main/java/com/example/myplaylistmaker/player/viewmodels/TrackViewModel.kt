@@ -4,16 +4,15 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.myplaylistmaker.player.data.repositories.TrackRepositoryImpl
+import com.example.myplaylistmaker.creator.Creator
 import com.example.myplaylistmaker.player.domain.api.TrackInteractor
-import com.example.myplaylistmaker.player.domain.interactors.TrackInteractorImpl
 import com.example.myplaylistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val trackInteractor: TrackInteractor = TrackInteractorImpl(TrackRepositoryImpl(application))
+    private val trackInteractor: TrackInteractor = Creator.provideTrackInteractor(application)
     private val _track = MutableLiveData<Track>()
     val track: LiveData<Track> = _track
 

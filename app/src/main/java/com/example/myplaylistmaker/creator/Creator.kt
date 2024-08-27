@@ -3,10 +3,12 @@ package com.example.myplaylistmaker.creator
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.myplaylistmaker.App
+import com.example.myplaylistmaker.player.data.repositories.TrackRepositoryImpl
+import com.example.myplaylistmaker.player.domain.api.TrackInteractor
+import com.example.myplaylistmaker.player.domain.interactors.TrackInteractorImpl
 import com.example.myplaylistmaker.search.data.network.RetrofitNetworkClient
 import com.example.myplaylistmaker.search.data.repositories.SearchHistoryRepositoryImpl
 import com.example.myplaylistmaker.search.data.repositories.SearchRepositoryImpl
-import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.myplaylistmaker.search.domain.api.SearchInteractor
 import com.example.myplaylistmaker.search.domain.interactors.SearchHistoryInteractorImpl
@@ -17,22 +19,24 @@ import com.example.myplaylistmaker.settings.data.ThemeRepositoryImp
 import com.example.myplaylistmaker.settings.domain.api.ThemeInteractor
 import com.example.myplaylistmaker.settings.domain.interactors.ThemeInteractorImpl
 import com.example.myplaylistmaker.settings.domain.repositories.ThemeRepository
-import com.example.myplaylistmaker.sharing.data.ResourceProviderImpl
-import com.example.myplaylistmaker.sharing.domain.Repository
-
+import com.example.myplaylistmaker.sharing.data.repositories.ExternalNavigatorImpl
+import com.example.myplaylistmaker.sharing.domain.api.ExternalNavigator
+import com.example.myplaylistmaker.sharing.domain.api.SharingInteractor
+import com.example.myplaylistmaker.sharing.domain.interactors.SharingInteractorImpl
 
 object Creator {
     private lateinit var application: App
-    private lateinit var shareResources: Repository
 
     fun initApplication(application: App) {
-        this.application = application
-        val resourceProvider = ResourceProviderImpl(application.resources)
-        shareResources = Repository(resourceProvider)
+        Creator.application = application
     }
 
-    fun provideRepository(): Repository {
-        return shareResources
+    private fun getExternalNavigator(): ExternalNavigator {
+        return ExternalNavigatorImpl(application)
+    }
+
+    fun provideSharingInteractor(): SharingInteractor {
+        return SharingInteractorImpl(getExternalNavigator())
     }
 
     private fun provideSearchRepository(): SearchRepository {
@@ -42,8 +46,6 @@ object Creator {
     fun provideSearchInteractor(): SearchInteractor {
         return SearchInteractorImpl(provideSearchRepository())
     }
-
-
 
     fun provideSharedPreferences(key: String): SharedPreferences {
         return application.getSharedPreferences(key, Context.MODE_PRIVATE)
@@ -57,13 +59,18 @@ object Creator {
         return ThemeRepositoryImp()
     }
 
+    fun provideTrackInteractor(context: Context): TrackInteractor {
+        val repository = TrackRepositoryImpl(context)
+        return TrackInteractorImpl(repository)
+    }
+
     private lateinit var sharedPreferences: SharedPreferences
 
     fun initialize(sharedPreferences: SharedPreferences) {
         Creator.sharedPreferences = sharedPreferences
     }
 
-    val repository: SearchHistoryRepository by lazy {
+    private val repository: SearchHistoryRepository by lazy {
         SearchHistoryRepositoryImpl(sharedPreferences)
     }
 
@@ -71,4 +78,6 @@ object Creator {
         return SearchHistoryInteractorImpl(repository)
     }
 }
+
+
 

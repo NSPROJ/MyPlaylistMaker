@@ -8,28 +8,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.settings.viewmodels.ThemeViewModel
-import com.example.myplaylistmaker.sharing.viewmodels.ShareViewModel
+import com.example.myplaylistmaker.sharing.viewmodels.SettingsViewModel
+import com.example.myplaylistmaker.sharing.viewmodels.SettingsViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ShareViewModel
-
     private val themeViewModel by lazy {
         ViewModelProvider(this)[ThemeViewModel::class.java]
+    }
+
+    private val settingsViewModel by lazy {
+        ViewModelProvider(this, SettingsViewModelFactory())[SettingsViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
 
-        viewModel = ViewModelProvider(this, ShareViewModel.Factory())[ShareViewModel::class.java]
-
         val arrow1Button: ImageView = findViewById(R.id.arrow1)
         arrow1Button.setOnClickListener {
             finish()
         }
 
+        val buttonShare = findViewById<ImageView>(R.id.set_share)
         val themeSwitcher: SwitchMaterial = findViewById(R.id.themeSwitcher)
 
         themeViewModel.isThemeChecked.observe(this) { isChecked ->
@@ -40,54 +42,33 @@ class SettingsActivity : AppCompatActivity() {
             themeViewModel.onThemeSwitchChanged(isChecked)
         }
 
-        val buttonShare = findViewById<ImageView>(R.id.set_share)
-        val buttonSup = findViewById<ImageView>(R.id.set_support)
-        val buttonOffer = findViewById<ImageView>(R.id.set_offer)
-
-        viewModel.shareIntentData.observe(this) { message ->
-            message?.let {
-                val shareIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, it)
-                    type = "text/plain"
-                }
-                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_string)))
-            }
-        }
-
-        viewModel.supportIntentData.observe(this) { supportData ->
-            supportData?.let {
-                val mailIntent = Intent().apply {
-                    action = Intent.ACTION_SENDTO
-                    data = Uri.parse("mailto:")
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf(it.email))
-                    putExtra(Intent.EXTRA_SUBJECT, it.subject)
-                    putExtra(Intent.EXTRA_TEXT, it.text)
-                }
-                startActivity(mailIntent)
-            }
-        }
-
-        viewModel.offerIntentData.observe(this) { url ->
-            url?.let {
-                val offerIntent = Intent(Intent.ACTION_VIEW)
-                offerIntent.data = Uri.parse(it)
-                startActivity(offerIntent)
-            }
-        }
-
         buttonShare.setOnClickListener {
-            viewModel.prepareShareIntent()
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            val message = settingsViewModel.getShareAppLink()
+            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+            val chooserIntent = Intent.createChooser(shareIntent, getString(R.string.share_string))
+            startActivity(chooserIntent)
         }
 
+        val buttonSup = findViewById<ImageView>(R.id.set_support)
         buttonSup.setOnClickListener {
-            viewModel.prepareSupportIntent()
+            val supportData = settingsViewModel.getSupportEmailData()
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(supportData.email))
+                putExtra(Intent.EXTRA_SUBJECT, supportData.subject)
+                putExtra(Intent.EXTRA_TEXT, supportData.text)
+            }
+            startActivity(intent)
         }
 
+        val buttonOffer = findViewById<ImageView>(R.id.set_offer)
         buttonOffer.setOnClickListener {
-            viewModel.prepareOfferIntent()
+            val url = Uri.parse(settingsViewModel.getTermsLink())
+            val intent = Intent(Intent.ACTION_VIEW, url)
+            startActivity(intent)
         }
     }
 }
-
 
