@@ -258,5 +258,8 @@
     <style name="PauseStyle">
         <item name="srcCompat">@drawable/pause_night</item>
     </style>
+    <style name="PlaceholderNothingStyle">
+        <item name="srcCompat">@drawable/ic_placeholder_light</item>
+    </style>
 
 </resources>

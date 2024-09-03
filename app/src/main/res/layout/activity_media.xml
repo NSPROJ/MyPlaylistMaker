@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/WhiteBackgroundLayoutStyle"
-    tools:context=".ui.media.MediaActivity">
+    tools:context=".player.ui.MediaActivity">
 
     <ImageView
         style="@style/CustomImageViewStyle"
