@@ -5,22 +5,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.settings.viewmodels.ThemeViewModel
 import com.example.myplaylistmaker.sharing.viewmodels.SettingsViewModel
-import com.example.myplaylistmaker.sharing.viewmodels.SettingsViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val themeViewModel by lazy {
-        ViewModelProvider(this)[ThemeViewModel::class.java]
-    }
+    private val themeViewModel by viewModel<ThemeViewModel>()
 
-    private val settingsViewModel by lazy {
-        ViewModelProvider(this, SettingsViewModelFactory())[SettingsViewModel::class.java]
-    }
+    private val settingsViewModel by viewModel<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

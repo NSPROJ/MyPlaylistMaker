@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -18,6 +17,7 @@ import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.viewmodels.PlayerViewModel
 import com.example.myplaylistmaker.player.viewmodels.TrackViewModel
 import com.example.myplaylistmaker.search.domain.Track
+import org.koin.android.ext.android.inject
 
 @Suppress("DEPRECATION")
 class MediaActivity : AppCompatActivity() {
@@ -25,9 +25,9 @@ class MediaActivity : AppCompatActivity() {
     companion object {
         const val TRACK_KEY = "track"
     }
+    private val viewModel: PlayerViewModel by inject()
+    private val trackViewModel: TrackViewModel by inject()
 
-    private lateinit var viewModel: PlayerViewModel
-    private lateinit var trackViewModel: TrackViewModel
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
     private lateinit var progressTextView: TextView
@@ -40,21 +40,13 @@ class MediaActivity : AppCompatActivity() {
         pauseButton = findViewById(R.id.imageView3pause)
         progressTextView = findViewById(R.id.time_dur)
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[PlayerViewModel::class.java]
-
-        trackViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[TrackViewModel::class.java]
-
         val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
         trackViewModel.initTrack(intentTrack)
 
         trackViewModel.track.observe(this) { track ->
-            viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+            if (track != null) {
+                viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+            }
 
             playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
             pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
@@ -62,7 +54,9 @@ class MediaActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
 
 
-            viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+            if (track != null) {
+                viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+            }
 
             observeViewModel()
             updateUI()

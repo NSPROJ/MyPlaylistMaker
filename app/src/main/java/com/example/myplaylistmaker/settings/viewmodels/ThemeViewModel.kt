@@ -3,11 +3,9 @@ package com.example.myplaylistmaker.settings.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myplaylistmaker.creator.Creator
+import com.example.myplaylistmaker.settings.domain.api.ThemeInteractor
 
-class ThemeViewModel : ViewModel() {
-
-    private val switchThemeInteractor = Creator.provideSwitchThemeInteractor()
+class ThemeViewModel(private val switchThemeInteractor: ThemeInteractor) : ViewModel() {
 
     private val isThemeCheck = MutableLiveData<Boolean>()
 

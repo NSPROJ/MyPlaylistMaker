@@ -1,15 +1,14 @@
 package com.example.myplaylistmaker.player.viewmodels
 
-import android.app.Application
 import android.media.MediaPlayer
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application) {
+class PlayerViewModel : ViewModel() {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private val _isPlaying = MutableLiveData<Boolean>()
