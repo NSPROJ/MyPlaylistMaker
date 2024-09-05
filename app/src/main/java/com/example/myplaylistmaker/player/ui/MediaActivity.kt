@@ -17,7 +17,7 @@ import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.viewmodels.PlayerViewModel
 import com.example.myplaylistmaker.player.viewmodels.TrackViewModel
 import com.example.myplaylistmaker.search.domain.Track
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
 class MediaActivity : AppCompatActivity() {
@@ -25,8 +25,8 @@ class MediaActivity : AppCompatActivity() {
     companion object {
         const val TRACK_KEY = "track"
     }
-    private val viewModel: PlayerViewModel by inject()
-    private val trackViewModel: TrackViewModel by inject()
+    private val viewModel by viewModel<PlayerViewModel>()
+    private val trackViewModel by viewModel<TrackViewModel>()
 
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
@@ -42,6 +42,8 @@ class MediaActivity : AppCompatActivity() {
 
         val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
         trackViewModel.initTrack(intentTrack)
+
+        lifecycle.addObserver(viewModel)
 
         trackViewModel.track.observe(this) { track ->
             if (track != null) {
