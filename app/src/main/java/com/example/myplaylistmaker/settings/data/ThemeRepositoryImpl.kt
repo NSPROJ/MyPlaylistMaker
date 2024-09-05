@@ -14,7 +14,7 @@ class ThemeRepositoryImpl : ThemeRepository {
 
     override fun sharedPreferencesEdit(checked: Boolean) {
         val sharedPref = getKoin().get<SharedPreferences>()
-        sharedPref.edit().putBoolean("key_theme", checked).apply()
+        sharedPref.edit().putBoolean(THEME_KEY, checked).apply()
     }
 
     override fun getSharedPreferencesThemeValue(): Boolean {
