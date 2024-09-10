@@ -1,16 +1,16 @@
 package com.example.myplaylistmaker.search.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.myplaylistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
 import com.example.myplaylistmaker.search.domain.Track
+import com.example.myplaylistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.myplaylistmaker.search.domain.api.SearchInteractor
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
-    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
-    private val searchInteractor = Creator.provideSearchInteractor()
+class SearchViewModel(
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+    private val searchInteractor: SearchInteractor
+) : ViewModel() {
 
     private val _tracks = MutableLiveData<List<Track>>()
     val tracks: LiveData<List<Track>> = _tracks

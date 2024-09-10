@@ -16,19 +16,18 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.ui.MediaActivity
+import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.ui.adapters.SearchHistoryAdapter
 import com.example.myplaylistmaker.search.ui.adapters.TrackAdapter
-import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.viewmodels.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SearchViewModel
     private lateinit var editText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var buttonClear: Button
@@ -45,12 +44,12 @@ class SearchActivity : AppCompatActivity() {
     private var isRefreshing = false
     private var searchHandler: Handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
+    private val viewModel by viewModel<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         initializeViews()
         setupAdapters()
@@ -108,9 +107,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupAdapters() {
         trackAdapter = TrackAdapter(trackList) { track -> onTrackSelectedHistory(track) }
-        historyAdapter = SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList()) { track ->
-            onTrackSelected(track)
-        }
+        historyAdapter =
+            SearchHistoryAdapter(viewModel.searchHistory.value ?: emptyList()) { track ->
+                onTrackSelected(track)
+            }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter

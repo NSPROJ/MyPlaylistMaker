@@ -1,20 +1,16 @@
 package com.example.myplaylistmaker.player.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.myplaylistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
 import com.example.myplaylistmaker.player.domain.api.TrackInteractor
 import com.example.myplaylistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewModel(application: Application) : AndroidViewModel(application) {
+class TrackViewModel(private val trackInteractor: TrackInteractor) : ViewModel() {
 
-    private val trackInteractor: TrackInteractor = Creator.provideTrackInteractor(application)
-    private val _track = MutableLiveData<Track>()
-    val track: LiveData<Track> = _track
+    private val _track = MutableLiveData<Track?>()
+    val track: MutableLiveData<Track?> = _track
 
     fun initTrack(intentTrack: Track?) {
         if (intentTrack != null) {

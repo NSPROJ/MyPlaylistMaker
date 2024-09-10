@@ -1,15 +1,19 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.myplaylistmaker.player.viewmodels
 
-import android.app.Application
 import android.media.MediaPlayer
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application) {
+class PlayerViewModel : ViewModel(), LifecycleObserver {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private val _isPlaying = MutableLiveData<Boolean>()
@@ -76,5 +80,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         super.onCleared()
         mediaPlayer.release()
         handler.removeCallbacks(updateProgressRunnable)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onLifecyclePause() {
+        pausePlayback()
     }
 }
