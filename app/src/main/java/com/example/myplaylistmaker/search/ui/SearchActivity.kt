@@ -19,7 +19,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.R
-import com.example.myplaylistmaker.player.ui.MediaActivity
+import com.example.myplaylistmaker.player.ui.PlayerActivity
 import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.ui.adapters.SearchHistoryAdapter
 import com.example.myplaylistmaker.search.ui.adapters.TrackAdapter
@@ -215,7 +215,7 @@ class SearchActivity : AppCompatActivity() {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastClickTime > CLICK_INTERVAL) {
             lastClickTime = currentTime
-            val intent = Intent(this, MediaActivity::class.java).apply {
+            val intent = Intent(this, PlayerActivity::class.java).apply {
                 putExtra("track", track)
             }
             startActivity(intent)

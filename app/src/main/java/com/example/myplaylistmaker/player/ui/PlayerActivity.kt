@@ -20,11 +20,12 @@ import com.example.myplaylistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
-class MediaActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity() {
 
     companion object {
         const val TRACK_KEY = "track"
     }
+
     private val viewModel by viewModel<PlayerViewModel>()
     private val trackViewModel by viewModel<TrackViewModel>()
 
@@ -34,7 +35,7 @@ class MediaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_media)
+        setContentView(R.layout.activity_player)
 
         playButton = findViewById(R.id.imageView3)
         pauseButton = findViewById(R.id.imageView3pause)
