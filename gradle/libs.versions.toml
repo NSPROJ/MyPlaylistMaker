@@ -19,6 +19,7 @@ constraintlayout = "2.1.4"
 carUiLib = "2.6.0"
 composePreviewRenderer = "0.0.1-alpha01"
 materialVersion = "1.6.1"
+navigationUiKtxVersion = "2.5.3"
 retrofit = "2.11.0"
 uiDesktop = "1.6.8"
 viewpager2 = "1.0.0"
@@ -27,6 +28,8 @@ viewpager2 = "1.0.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationUiKtxVersion" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 compiler = { module = "com.github.bumptech.glide:compiler", version = "4.16.0" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
