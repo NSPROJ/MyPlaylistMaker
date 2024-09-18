@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/WhiteBackgroundLayoutStyle"
+    tools:context=".player.ui.PlayerActivity">
+
+    <ImageView
+        style="@style/CustomImageViewStyle"
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/strelka" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="16dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="16dp" />
+
+            <ImageView
+                android:id="@+id/albumCover"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:tag="@+id/artworkUrl100"
+                android:src="@drawable/placeholdertrue"
+                app:layout_constraintBottom_toTopOf="@id/songTitle"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.1" />
+
+            <TextView
+                style="@style/MediaTextStyle2"
+                android:id="@+id/songTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_40dp"
+                android:layout_marginStart="@dimen/_8dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:text=""
+                android:textSize="@dimen/_20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/albumCover" />
+
+            <TextView
+                style="@style/MediaTextStyle2"
+                android:id="@+id/artistName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10dp"
+                android:layout_marginStart="@dimen/_8dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="The Beatles"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/songTitle" />
+
+            <TextView
+                android:id="@+id/songDurationLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_32dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Длительность"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintStart_toStartOf="@+id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@+id/time_dur" />
+
+            <TextView
+                style="@style/MediaTextStyle"
+                android:id="@+id/songDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="5:35"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/songDurationLabel"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right" />
+
+            <TextView
+                android:id="@+id/albumLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mainSize_16dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Альбом"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/songDurationLabel" />
+
+            <TextView
+                android:id="@+id/albumName"
+                style="@style/MediaTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:maxLength="30"
+                android:text=""
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/albumLabel"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/yearLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Год"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/albumLabel" />
+
+            <TextView
+                style="@style/MediaTextStyle"
+                android:id="@+id/year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="1965"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/yearLabel"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right" />
+
+            <TextView
+                android:id="@+id/genreLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mainSize_16dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Жанр"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/yearLabel" />
+
+            <TextView
+                style="@style/MediaTextStyle"
+                android:id="@+id/genre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Rock"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/genreLabel"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right" />
+
+            <TextView
+                android:id="@+id/countryLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mainSize_16dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Страна"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/genreLabel" />
+
+            <TextView
+                style="@style/MediaTextStyle"
+                android:id="@+id/country1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="Великобритания"
+                android:textSize="@dimen/_14sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/countryLabel"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                style="@style/AddStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_86dp"
+                app:layout_constraintEnd_toStartOf="@id/imageView3"
+                app:layout_constraintHorizontal_bias="0.125"
+                app:layout_constraintStart_toStartOf="@id/guideline_left"
+                app:layout_constraintTop_toBottomOf="@id/songTitle" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                style="@style/PlayStyle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/artistName"
+                app:layout_constraintVertical_bias="0.134" />
+
+            <ImageView
+                android:id="@+id/imageView3pause"
+                style="@style/PauseStyle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toBottomOf="@+id/artistName"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <ImageView
+                style="@style/FavStyle"
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_86dp"
+                app:layout_constraintEnd_toEndOf="@id/guideline_right"
+                app:layout_constraintHorizontal_bias="0.835"
+                app:layout_constraintStart_toEndOf="@id/imageView3"
+                app:layout_constraintTop_toBottomOf="@id/songTitle"/>
+
+            <TextView
+                style="@style/MediaTextStyle"
+                android:id="@+id/time_dur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="0:30"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView3" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

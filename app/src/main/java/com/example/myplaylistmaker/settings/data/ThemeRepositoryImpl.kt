@@ -6,6 +6,7 @@ import com.example.myplaylistmaker.settings.domain.repositories.ThemeRepository
 import org.koin.java.KoinJavaComponent.getKoin
 
 class ThemeRepositoryImpl : ThemeRepository {
+
     override fun switchTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
