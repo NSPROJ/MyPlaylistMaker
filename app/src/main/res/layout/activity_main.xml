@@ -1,43 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/PurpleLinearLayoutStyle">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            style="@style/AppTextViewStyle"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/app_n" />
-    </FrameLayout>
-
-    <LinearLayout
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container_view"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/main_graph" />
 
-        <Button
-            style="@style/AppButtonStyle"
-            android:id="@+id/searchButton"
-            android:layout_marginTop="20dp"
-            android:text="@string/title_search"
-            app:icon="@drawable/light_mode2"/>
-
-
-        <Button
-            style="@style/AppButtonStyle"
-            android:id="@+id/mediaButton"
-            android:text="@string/title_media_library"
-            app:icon="@drawable/light_mode1"/>
-
-        <Button
-            style="@style/AppButtonStyle"
-            android:id="@+id/settingsButton"
-            android:text="@string/title_settings"
-            app:icon="@drawable/light_mode"/>
-    </LinearLayout>
-
-</LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemTextColor="@color/bottom_text"
+        app:itemIconTint="@color/bottom_icon"
+        app:menu="@menu/bottom_menu" />
+</androidx.constraintlayout.widget.ConstraintLayout>

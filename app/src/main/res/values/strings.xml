@@ -31,13 +31,13 @@
     <string name="u_searched">Вы искали</string>
     <string name="clear_hist">Очистить историю</string>
     <string name="zero_time">00:00</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="EmptyMedia">Ваша медиатека пуста</string>
     <string name="No1Playlists">Вы не создали ни одного плейлиста</string>
     <string name="Media">Медиатека</string>
     <string name="Playlists">Плейлисты</string>
+    <string name="Settings">Настройки</string>
     <string name="Favorites">Избранное</string>
     <string name="no1play">Вы не создали\n ни одного плейлиста</string>
     <string name="FavsTrack">Избранные треки</string>

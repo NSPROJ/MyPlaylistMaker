@@ -3,33 +3,32 @@ package com.example.myplaylistmaker.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.settings.viewmodels.ThemeViewModel
 import com.example.myplaylistmaker.sharing.viewmodels.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
     private val themeViewModel by viewModel<ThemeViewModel>()
-
     private val settingsViewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.settings_fragment, container, false)
 
-        val arrow1Button: ImageView = findViewById(R.id.arrow1)
-        arrow1Button.setOnClickListener {
-            finish()
-        }
+        val buttonShare = view.findViewById<ImageView>(R.id.set_share)
+        val themeSwitcher: SwitchMaterial = view.findViewById(R.id.themeSwitcher)
 
-        val buttonShare = findViewById<ImageView>(R.id.set_share)
-        val themeSwitcher: SwitchMaterial = findViewById(R.id.themeSwitcher)
-
-        themeViewModel.isThemeChecked.observe(this) { isChecked ->
+        themeViewModel.isThemeChecked.observe(viewLifecycleOwner) { isChecked ->
             themeSwitcher.isChecked = isChecked
         }
 
@@ -38,15 +37,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         buttonShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            val message = settingsViewModel.getShareAppLink()
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, settingsViewModel.getShareAppLink())
+            }
             val chooserIntent = Intent.createChooser(shareIntent, getString(R.string.share_string))
             startActivity(chooserIntent)
         }
 
-        val buttonSup = findViewById<ImageView>(R.id.set_support)
+        val buttonSup = view.findViewById<ImageView>(R.id.set_support)
         buttonSup.setOnClickListener {
             val supportData = settingsViewModel.getSupportEmailData()
             val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -58,12 +57,13 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val buttonOffer = findViewById<ImageView>(R.id.set_offer)
+        val buttonOffer = view.findViewById<ImageView>(R.id.set_offer)
         buttonOffer.setOnClickListener {
             val url = Uri.parse(settingsViewModel.getTermsLink())
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         }
+
+        return view
     }
 }
-
