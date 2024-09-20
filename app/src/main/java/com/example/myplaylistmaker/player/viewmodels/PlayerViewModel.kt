@@ -37,7 +37,7 @@ class PlayerViewModel : ViewModel(), LifecycleObserver {
     private fun formatTime(seconds: Int): String {
         val minutes = seconds / 60
         val remainingSeconds = seconds % 60
-        return String.format("%02d:%02d", minutes, remainingSeconds)
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
     }
 
     fun initMediaPlayer(trackUrl: String, duration: Long) {
@@ -73,6 +73,7 @@ class PlayerViewModel : ViewModel(), LifecycleObserver {
     private fun onPlaybackComplete() {
         _isPlaying.value = false
         savedPosition = 0
+        _currentPosition.value = 0
         handler.removeCallbacks(updateProgressRunnable)
     }
 

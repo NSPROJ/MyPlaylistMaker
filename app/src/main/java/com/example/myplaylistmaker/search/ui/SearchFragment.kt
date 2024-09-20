@@ -149,7 +149,7 @@ class SearchFragment : Fragment() {
                             searchTracks(s.toString())
                         }
                     }
-                    searchHandler.postDelayed(searchRunnable!!, 200)
+                    searchHandler.postDelayed(searchRunnable!!, 1500)
                 } else {
                     updateHistoryVisibility()
                 }
@@ -163,7 +163,8 @@ class SearchFragment : Fragment() {
 
         clearButton.setOnClickListener {
             clearSearchField()
-            updateHistoryVisibility()
+            clearSearchFieldFocus()
+
         }
 
         buttonClear.setOnClickListener {
@@ -176,11 +177,6 @@ class SearchFragment : Fragment() {
                 searchTracks(searchText)
             }
         }
-    }
-
-    companion object {
-        private const val SAVED_TEXT_KEY = "savedText"
-        private const val CLICK_INTERVAL = 1000L
     }
 
     private fun handleSavedInstanceState(savedInstanceState: Bundle) {
@@ -221,10 +217,16 @@ class SearchFragment : Fragment() {
         if (currentTime - lastClickTime > CLICK_INTERVAL) {
             lastClickTime = currentTime
             val intent = Intent(context, PlayerActivity::class.java).apply {
-                putExtra("track", track)
+                putExtra(TRACK_KEY, track)
             }
             startActivity(intent)
         }
+    }
+
+    companion object {
+        private const val SAVED_TEXT_KEY = "savedText"
+        private const val CLICK_INTERVAL = 1000L
+        private const val TRACK_KEY = "track"
     }
 
     private fun onTrackSelectedHistory(track: Track) {
@@ -316,6 +318,7 @@ class SearchFragment : Fragment() {
             recyclerView.visibility = visibility
             placeholderText.visibility = visibility
             placeholderImage.visibility = visibility
+            refreshButton.visibility = visibility
         }
     }
 
@@ -334,6 +337,9 @@ class SearchFragment : Fragment() {
     private fun updateUIForResults() {
         buttonClear.visibility = View.GONE
         historyTitle.visibility = View.GONE
+        placeholderText.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        refreshButton.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
         recyclerView.adapter = trackAdapter
     }

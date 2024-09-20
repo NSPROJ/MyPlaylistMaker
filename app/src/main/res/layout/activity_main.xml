@@ -17,10 +17,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_graph" />
 
+    <View
+        android:id="@+id/rectangle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1dp"
+        android:background="#E6E8EB"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/whites"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

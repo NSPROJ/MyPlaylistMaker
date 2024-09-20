@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/whites"
     tools:context=".media.ui.MediaFragment">
 
     <TextView
@@ -33,6 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView"
         app:tabGravity="center"
+        android:background="@color/whites"
         app:tabIndicatorColor="@color/blacks"
         app:tabTextColor="@color/blacks"
         tools:ignore="SpeakableTextPresentCheck" />

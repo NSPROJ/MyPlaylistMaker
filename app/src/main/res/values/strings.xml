@@ -41,5 +41,7 @@
     <string name="Favorites">Избранное</string>
     <string name="no1play">Вы не создали\n ни одного плейлиста</string>
     <string name="FavsTrack">Избранные треки</string>
+    <string name="_0_00">0:00</string>
+    <string name="start_time">00:00</string>
 
 </resources>
