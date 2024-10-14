@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/WhiteBackgroundLinearLayoutStyle"
+    android:orientation="vertical"
     android:visibility="visible"
-    tools:visibility="visible"
-    android:orientation="vertical">
+    tools:context=".search.ui.SearchFragment"
+    tools:visibility="visible">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,18 +15,11 @@
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            style="@style/AppArrowImageView"
-            android:id="@+id/arrow2"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            style="@style/AppTitleSearchTextView" />
+        <TextView style="@style/AppTitleSearchTextView" />
 
     </LinearLayout>
 
-    <LinearLayout
-        style="@style/SearchLinearLayout">
+    <LinearLayout style="@style/SearchLinearLayout">
 
         <ImageView
             style="@style/SearchImageView"
@@ -33,12 +27,12 @@
 
         <EditText
             android:id="@+id/editText"
-            android:hint="@string/search"
-            android:singleLine="true"
             style="@style/SearchEditText"
-            tools:ignore="TouchTargetSizeCheck"
+            android:hint="@string/search"
             android:maxLength="25"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:singleLine="true"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/clearButton"
@@ -47,8 +41,8 @@
     </LinearLayout>
 
     <TextView
-        style="@style/PlaceholderTextStyle"
         android:id="@+id/historyTitle"
+        style="@style/PlaceholderTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="33dp"
@@ -56,7 +50,7 @@
         android:gravity="center_horizontal"
         android:text="@string/u_searched"
         android:textSize="19sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
     <LinearLayout
@@ -67,12 +61,12 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_marginTop="@dimen/_150dp"
             style="?android:attr/progressBarStyle"
-            android:visibility="gone"
-            android:indeterminateTint="@color/deep_blue"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_150dp"
+            android:indeterminateTint="@color/deep_blue"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchResultsRecyclerView"
@@ -97,8 +91,8 @@
     </LinearLayout>
 
     <ImageView
-        style="@style/PlaceholderNothingStyle"
         android:id="@+id/placeholderImage"
+        style="@style/PlaceholderNothingStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -107,8 +101,8 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        style="@style/PlaceholderTextStyle"
         android:id="@+id/placeholderText"
+        style="@style/PlaceholderTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"

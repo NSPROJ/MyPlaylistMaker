@@ -2,9 +2,12 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/media_favorites"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/whites"
+    tools:context=".media.ui.FavoritesFragment">
 
     <ImageView
         android:id="@+id/placeholder"
@@ -17,14 +20,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        style="@style/PlaceholderText"
         android:id="@+id/placeholder_text"
-        android:fontFamily="@font/ys_display_medium"
+        style="@style/PlaceholderText"
         android:layout_width="wrap_content"
-        android:textSize="@dimen/_19sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16dp"
+        android:fontFamily="@font/ys_display_medium"
         android:text="@string/EmptyMedia"
+        android:textSize="@dimen/_19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeholder" />

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/WhiteBackgroundLinearLayoutStyle"
     android:visibility="visible"
+    tools:context=".settings.ui.SettingsFragment"
     tools:visibility="visible">
 
     <LinearLayout
@@ -11,14 +12,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-
-        <ImageView
-            style="@style/AppArrowImageView"
-            android:id="@+id/arrow1"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            style="@style/AppTitleTextView"/>
+        <TextView style="@style/AppTitleTextView" />
 
     </LinearLayout>
 
