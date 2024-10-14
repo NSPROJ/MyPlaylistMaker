@@ -1,21 +1,23 @@
 package com.example.myplaylistmaker.search.domain.interactors
 
+import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.domain.api.SearchInteractor
 import com.example.myplaylistmaker.search.domain.repositories.SearchRepository
-import java.util.concurrent.Executors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class SearchInteractorImpl(private val repository: SearchRepository) : SearchInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun searchTrack(expression: String, consumer: SearchInteractor.SearchConsumer) {
-        executor.execute {
-            try {
-                val foundTracks = repository.searchTrack(expression)
-                consumer.consume(foundTracks)
-            } catch (e: Exception) {
-                consumer.onError(e)
-            }
+    override fun searchTrack(expression: String): Flow<List<Track>> = flow {
+        try {
+            repository.searchTrack(expression)
+                .collect { tracks ->
+                    emit(tracks)
+                }
+        } catch (e: Exception) {
+            throw e
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }

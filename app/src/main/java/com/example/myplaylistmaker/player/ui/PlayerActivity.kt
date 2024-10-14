@@ -21,7 +21,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity() {
-
     companion object {
         const val TRACK_KEY = "track"
     }
@@ -56,28 +55,8 @@ class PlayerActivity : AppCompatActivity() {
 
             findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
 
-
-            if (track != null) {
-                viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
-            }
-
             observeViewModel()
             updateUI()
-
-        }
-    }
-
-
-    private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
-        val debounceInterval = 1000L
-        var lastClickTime = 0L
-
-        return View.OnClickListener {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastClickTime >= debounceInterval) {
-                lastClickTime = currentTime
-                onClick()
-            }
         }
     }
 
@@ -141,6 +120,19 @@ class PlayerActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.country1).text = track.country
 
         loadArtwork()
+    }
+
+    private fun debounceClick(onClick: () -> Unit): View.OnClickListener {
+        val debounceInterval = 1000L
+        var lastClickTime = 0L
+
+        return View.OnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime >= debounceInterval) {
+                lastClickTime = currentTime
+                onClick()
+            }
+        }
     }
 
     private fun loadArtwork() {
