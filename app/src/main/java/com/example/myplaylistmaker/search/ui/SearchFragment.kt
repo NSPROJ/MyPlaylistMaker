@@ -155,7 +155,6 @@ class SearchFragment : Fragment() {
                         }
                     }
                 } else {
-                    updateTrackList(null)
                     updateHistoryVisibility()
                 }
             }

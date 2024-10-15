@@ -26,7 +26,7 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         style="@style/TabLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/_48dp"
         android:layout_marginTop="@dimen/_12dp"
         app:layout_constraintBottom_toTopOf="@id/viewPager"

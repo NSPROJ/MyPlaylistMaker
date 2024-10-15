@@ -32,8 +32,7 @@
             android:maxLength="25"
             android:maxLines="1"
             android:singleLine="true"
-            tools:ignore="TouchTargetSizeCheck"
-            android:textCursorDrawable="@drawable/cursor"/>
+            tools:ignore="TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/clearButton"
@@ -66,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_150dp"
-            android:indeterminateTint="@color/purple"
+            android:indeterminateTint="@color/deep_blue"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
