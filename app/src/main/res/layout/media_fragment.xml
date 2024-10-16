@@ -33,7 +33,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView"
-        app:tabGravity="center"
         android:background="@color/whites"
         app:tabIndicatorColor="@color/blacks"
         app:tabTextColor="@color/blacks"
