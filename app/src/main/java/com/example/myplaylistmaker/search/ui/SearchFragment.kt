@@ -3,8 +3,6 @@ package com.example.myplaylistmaker.search.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -18,6 +16,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.R
@@ -26,6 +25,9 @@ import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.ui.adapters.SearchHistoryAdapter
 import com.example.myplaylistmaker.search.ui.adapters.TrackAdapter
 import com.example.myplaylistmaker.search.viewmodels.SearchViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -44,9 +46,8 @@ class SearchFragment : Fragment() {
     private var savedText: String = ""
     private val trackList = arrayListOf<Track>()
     private var isRefreshing = false
-    private var searchHandler: Handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
     private val viewModel by viewModel<SearchViewModel>()
+    private var searchJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -139,18 +140,22 @@ class SearchFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchJob?.cancel()
                 if (s.toString().isNotEmpty()) {
                     hideHistory()
                     placeholderText.visibility = View.GONE
                     placeholderImage.visibility = View.GONE
-                    searchRunnable?.let { searchHandler.removeCallbacks(it) }
-                    searchRunnable = Runnable {
-                        if (s!!.isNotEmpty()) {
-                            searchTracks(s.toString())
+
+                    searchJob = viewLifecycleOwner.lifecycleScope.launch {
+                        delay(2000)
+                        if (s != null) {
+                            if (s.isNotEmpty()) {
+                                searchTracks(s.toString())
+                            }
                         }
                     }
-                    searchHandler.postDelayed(searchRunnable!!, 1500)
                 } else {
+                    updateTrackList(null)
                     updateHistoryVisibility()
                 }
             }
@@ -162,6 +167,7 @@ class SearchFragment : Fragment() {
         })
 
         clearButton.setOnClickListener {
+            updateTrackList(null)
             clearSearchField()
             clearSearchFieldFocus()
 
@@ -211,15 +217,23 @@ class SearchFragment : Fragment() {
         hideHistory()
     }
 
-    private var lastClickTime = 0L
+    private var lastClickTime: Long = 0
+    private var clickJob: Job? = null
+
     private fun onTrackSelected(track: Track) {
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastClickTime > CLICK_INTERVAL) {
-            lastClickTime = currentTime
-            val intent = Intent(context, PlayerActivity::class.java).apply {
-                putExtra(TRACK_KEY, track)
+
+        clickJob?.cancel()
+        clickJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(CLICK_INTERVAL)
+
+            if (currentTime - lastClickTime >= CLICK_INTERVAL) {
+                lastClickTime = currentTime
+                val intent = Intent(context, PlayerActivity::class.java).apply {
+                    putExtra(TRACK_KEY, track)
+                }
+                context?.startActivity(intent)
             }
-            startActivity(intent)
         }
     }
 

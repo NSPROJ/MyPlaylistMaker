@@ -3,9 +3,12 @@ package com.example.myplaylistmaker.search.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myplaylistmaker.search.domain.Track
 import com.example.myplaylistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.myplaylistmaker.search.domain.api.SearchInteractor
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchHistoryInteractor: SearchHistoryInteractor,
@@ -30,22 +33,22 @@ class SearchViewModel(
 
     fun searchTracks(keyword: String) {
         _isLoading.postValue(true)
-        searchInteractor.searchTrack(keyword, object : SearchInteractor.SearchConsumer {
-            override fun consume(foundTrack: List<Track>) {
-                _isLoading.postValue(false)
-                if (foundTrack.isNotEmpty()) {
-                    _tracks.postValue(foundTrack)
-                    _uiState.postValue(UIState.ShowResults)
-                } else {
-                    _uiState.postValue(UIState.ShowEmptyResult)
+        viewModelScope.launch {
+            searchInteractor.searchTrack(keyword)
+                .catch {
+                    _isLoading.postValue(false)
+                    _uiState.postValue(UIState.ShowError)
                 }
-            }
-
-            override fun onError(error: Throwable) {
-                _isLoading.postValue(false)
-                _uiState.postValue(UIState.ShowError)
-            }
-        })
+                .collect { foundTracks ->
+                    _isLoading.postValue(false)
+                    if (foundTracks.isNotEmpty()) {
+                        _tracks.postValue(foundTracks)
+                        _uiState.postValue(UIState.ShowResults)
+                    } else {
+                        _uiState.postValue(UIState.ShowEmptyResult)
+                    }
+                }
+        }
     }
 
     fun addTrackToHistory(track: Track) {
