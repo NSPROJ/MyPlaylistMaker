@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.myplaylistmaker.R
+import com.example.myplaylistmaker.databinding.ActivityPlayerBinding
 import com.example.myplaylistmaker.player.viewmodels.PlayerViewModel
 import com.example.myplaylistmaker.player.viewmodels.TrackViewModel
 import com.example.myplaylistmaker.search.domain.Track
@@ -25,39 +26,69 @@ class PlayerActivity : AppCompatActivity() {
         const val TRACK_KEY = "track"
     }
 
+    private var _binding: ActivityPlayerBinding? = null
+    private val binding get() = _binding
     private val viewModel by viewModel<PlayerViewModel>()
     private val trackViewModel by viewModel<TrackViewModel>()
-
+    private lateinit var liked: ImageView
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
     private lateinit var progressTextView: TextView
+    private lateinit var favoriteButton: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
+        _binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+
         playButton = findViewById(R.id.imageView3)
         pauseButton = findViewById(R.id.imageView3pause)
         progressTextView = findViewById(R.id.time_dur)
+        favoriteButton = findViewById(R.id.favImage1)
+        liked = binding?.favLiked!!
 
         val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
         trackViewModel.initTrack(intentTrack)
 
         lifecycle.addObserver(viewModel)
 
+
+        trackViewModel.favorite.observe(this) { isFav ->
+            if (isFav) {
+                binding!!.favLiked.visibility = View.VISIBLE
+            } else {
+                binding!!.favLiked.visibility = View.GONE
+            }
+        }
+
+        favoriteButton.setOnClickListener {
+            trackViewModel.track.value?.let { track ->
+                trackViewModel.onFavoriteClicked(track)
+            }
+        }
+
         trackViewModel.track.observe(this) { track ->
             if (track != null) {
                 viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+
+                trackViewModel.isFavorite(track).observe(this) { isFavorite ->
+                    binding!!.favLiked.visibility = if (isFavorite) View.VISIBLE else View.GONE
+                }
+
             }
-
-            playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
-            pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
-
-            findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
-
-            observeViewModel()
-            updateUI()
         }
+
+        playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
+        pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
+
+
+        findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
+
+        observeViewModel()
+        updateUI()
     }
 
     private fun onPlayButtonClick() {

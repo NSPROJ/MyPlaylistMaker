@@ -2,6 +2,8 @@ package com.example.myplaylistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.myplaylistmaker.AppDataBase
 import com.example.myplaylistmaker.search.data.network.ApiService
 import com.example.myplaylistmaker.search.data.network.NetworkClient
 import com.example.myplaylistmaker.search.data.network.RetrofitNetworkClient
@@ -28,6 +30,15 @@ val appModule = module {
     single { get<Retrofit>().create(ApiService::class.java) }
 
     single<NetworkClient> { RetrofitNetworkClient(get()) }
+
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDataBase::class.java,
+            "database.db"
+        )
+            .build()
+    }
 }
 
 fun provideSharedPreferences(context: Context, key: String): SharedPreferences {
