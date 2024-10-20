@@ -10,6 +10,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,12 +25,11 @@ class PlayerViewModel : ViewModel(), LifecycleObserver {
     private val _trackDuration = MutableLiveData<String>()
     private val _formattedCurrentPosition = MediatorLiveData<String>()
     val formattedCurrentPosition: LiveData<String> = _formattedCurrentPosition
-    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var savedPosition = 0
+    private var updateJob: Job? = null
 
     val isPlaying: LiveData<Boolean> get() = _isPlaying
     val trackDuration: LiveData<String> get() = _trackDuration
-
-    private var savedPosition = 0
 
     init {
         _formattedCurrentPosition.addSource(_currentPosition) { position ->
@@ -53,34 +56,42 @@ class PlayerViewModel : ViewModel(), LifecycleObserver {
     fun startPlayback() {
         mediaPlayer.start()
         _isPlaying.value = true
-        handler.post(updateProgressRunnable)
+        startUpdatingProgress()
     }
 
     fun pausePlayback() {
         mediaPlayer.pause()
         savedPosition = mediaPlayer.currentPosition
         _isPlaying.value = false
+        stopUpdatingProgress()
     }
 
-    private val updateProgressRunnable = object : Runnable {
-        override fun run() {
-            val currentPositionInSeconds = mediaPlayer.currentPosition / 1000
-            _currentPosition.value = currentPositionInSeconds
-            handler.postDelayed(this, 1000)
+    private fun startUpdatingProgress() {
+        updateJob?.cancel()
+        updateJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+                val currentPositionInSeconds = mediaPlayer.currentPosition / 1000
+                _currentPosition.postValue(currentPositionInSeconds)
+                delay(300)
+            }
         }
+    }
+
+    private fun stopUpdatingProgress() {
+        updateJob?.cancel()
     }
 
     private fun onPlaybackComplete() {
         _isPlaying.value = false
         savedPosition = 0
         _currentPosition.value = 0
-        handler.removeCallbacks(updateProgressRunnable)
+        stopUpdatingProgress()
     }
 
     override fun onCleared() {
         super.onCleared()
         mediaPlayer.release()
-        handler.removeCallbacks(updateProgressRunnable)
+        stopUpdatingProgress()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
