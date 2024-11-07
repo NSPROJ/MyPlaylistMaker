@@ -284,6 +284,9 @@ class SearchFragment : Fragment() {
             recyclerView.visibility = View.VISIBLE
             historyTitle.visibility = View.VISIBLE
             buttonClear.visibility = View.VISIBLE
+            refreshButton.visibility = View.GONE
+            placeholderText.visibility = View.GONE
+            placeholderImage.visibility = View.GONE
         } else {
             historyTitle.visibility = View.GONE
             buttonClear.visibility = View.GONE

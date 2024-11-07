@@ -29,7 +29,11 @@ class SearchHistoryAdapter(
     }
 
     fun updateHistoryList(newHistoryList: List<Track>) {
-        historyList = newHistoryList
+        historyList = if (newHistoryList.size > 10) {
+            newHistoryList.subList(0, 10)
+        } else {
+            newHistoryList
+        }
         notifyDataSetChanged()
     }
 }

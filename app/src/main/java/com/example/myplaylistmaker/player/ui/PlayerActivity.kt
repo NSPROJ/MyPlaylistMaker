@@ -2,6 +2,7 @@ package com.example.myplaylistmaker.player.ui
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,7 +28,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private var _binding: ActivityPlayerBinding? = null
-    private val binding get() = _binding
+    private val binding get() = _binding!!
     private val viewModel by viewModel<PlayerViewModel>()
     private val trackViewModel by viewModel<TrackViewModel>()
     private lateinit var liked: ImageView
@@ -36,66 +37,54 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var progressTextView: TextView
     private lateinit var favoriteButton: ImageView
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        _binding = ActivityPlayerBinding.inflate(layoutInflater).apply { setContentView(root) }
 
-        _binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-
-        playButton = findViewById(R.id.imageView3)
-        pauseButton = findViewById(R.id.imageView3pause)
-        progressTextView = findViewById(R.id.time_dur)
-        favoriteButton = findViewById(R.id.favImage1)
-        liked = binding?.favLiked!!
+        playButton = binding.imageView3
+        pauseButton = binding.imageView3pause
+        progressTextView = binding.timeDur
+        favoriteButton = binding.favImage1
+        liked = binding.favLiked
 
         val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
-        trackViewModel.initTrack(intentTrack)
+        if (intentTrack != null) {
+            trackViewModel.initTrack(intentTrack, true)
+
+            intentTrack.previewUrl.let { url ->
+                viewModel.initMediaPlayer(url)
+            }
+        } else {
+            Log.w("PlayerActivity", "null track")
+        }
 
         lifecycle.addObserver(viewModel)
-
-
-        trackViewModel.favorite.observe(this) { isFav ->
-            if (isFav) {
-                binding!!.favLiked.visibility = View.VISIBLE
-            } else {
-                binding!!.favLiked.visibility = View.GONE
-            }
-        }
-
-        favoriteButton.setOnClickListener {
-            trackViewModel.track.value?.let { track ->
-                trackViewModel.onFavoriteClicked(track)
-            }
-        }
 
         trackViewModel.track.observe(this) { track ->
             if (track != null) {
                 viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
+            }}
 
-                trackViewModel.isFavorite(track).observe(this) { isFavorite ->
-                    binding!!.favLiked.visibility = if (isFavorite) View.VISIBLE else View.GONE
-                }
-
-            }
+        favoriteButton.setOnClickListener {
+            trackViewModel.toggleFavorite()
         }
 
         playButton.setOnClickListener(debounceClick { onPlayButtonClick() })
         pauseButton.setOnClickListener(debounceClick { onPauseButtonClick() })
 
-
-        findViewById<ImageView>(R.id.imageView).setOnClickListener { onBackPressed() }
+        binding.imageView.setOnClickListener { onBackPressed() }
 
         observeViewModel()
         updateUI()
     }
+
 
     private fun onPlayButtonClick() {
         if (viewModel.isPlaying.value == true) {
             viewModel.pausePlayback()
         } else {
             viewModel.startPlayback()
+
         }
     }
 
@@ -118,10 +107,16 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.formattedCurrentPosition.observe(this) { formattedTime ->
             progressTextView.text = formattedTime
         }
+        trackViewModel.track.observe(this) { track ->
+            track?.let {
+                liked.visibility = if (it.isFavorite) View.VISIBLE else View.INVISIBLE
+                updateUI()
+            }
+        }
 
         viewModel.trackDuration.observe(this) { duration ->
-            val trackDurationTextView = findViewById<TextView>(R.id.songDuration)
-            trackDurationTextView.text = duration
+            findViewById<TextView>(R.id.songDuration).text = duration
+            updateUI()
         }
     }
 

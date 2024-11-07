@@ -1,10 +1,11 @@
 package com.example.myplaylistmaker.player.viewmodels
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myplaylistmaker.db.FavoritesState
 import com.example.myplaylistmaker.media.domain.interactors.FavoritesInteractor
 import com.example.myplaylistmaker.player.domain.api.TrackInteractor
 import com.example.myplaylistmaker.search.domain.Track
@@ -21,67 +22,38 @@ class TrackViewModel(
     private val _track = MutableLiveData<Track?>()
     val track: LiveData<Track?> = _track
 
-    private val _favorite = MutableLiveData<Boolean>()
-    val favorite: LiveData<Boolean> = _favorite
+    fun toggleFavorite() {
+        val currentTrack = _track.value ?: return
 
-    private val _favoritesState = MutableLiveData<FavoritesState>()
-    val favoritesState: LiveData<FavoritesState> = _favoritesState
-
-    init {
-        fetchFavorites()
-    }
-
-    fun isFavorite(track: Track): LiveData<Boolean> {
-        val isFavoriteLiveData = MutableLiveData<Boolean>()
         viewModelScope.launch {
-            val isFavorite = favoritesInteractor.getFavorites()
-            isFavoriteLiveData.postValue(isFavorite.first().contains(track))
-        }
-        return isFavoriteLiveData
-    }
+            currentTrack.isFavorite = !currentTrack.isFavorite
 
-    private fun fetchFavorites() {
-        viewModelScope.launch {
-            favoritesInteractor.getFavorites().collect { favorites ->
-                if (favorites.isNotEmpty()) {
-                    _favoritesState.postValue(FavoritesState.Content(favorites))
-                } else {
-                    _favoritesState.postValue(FavoritesState.Error("Список избранных пуст"))
-                }
-            }
-        }
-    }
-
-    fun onFavoriteClicked(currentTrack: Track) {
-        viewModelScope.launch {
-            val currentIsFavorite = currentTrack.isFavorite
-            if (!currentIsFavorite) {
+            if (currentTrack.isFavorite) {
                 favoritesInteractor.insertFavorite(currentTrack)
-                _favorite.postValue(!currentIsFavorite)
             } else {
                 favoritesInteractor.deleteFavorite(currentTrack)
             }
-            _favorite.postValue(!currentIsFavorite)
-            fetchFavorites()
+
+            _track.value = currentTrack
         }
     }
 
-    fun initTrack(intentTrack: Track?) {
-        if (intentTrack != null) {
-            _track.value = intentTrack
-            viewModelScope.launch {
-                val isFavorite = favoritesInteractor.getFavorites()
-                _favorite.postValue(isFavorite.first().contains(intentTrack))
-            }
-            saveTrack(intentTrack)
-        } else {
-            val savedTrack = getSavedTrack()
-            _track.value = savedTrack
-            savedTrack.let {
-                viewModelScope.launch {
-                    val isFavorite = favoritesInteractor.getFavorites()
-                    _favorite.postValue(isFavorite.first().contains(savedTrack))
+    fun initTrack(intentTrack: Track?, isTrackSelected: Boolean) {
+        viewModelScope.launch {
+            val initializedTrack = intentTrack ?: getSavedTrack()
+
+            if (initializedTrack != null) {
+                val favorites = favoritesInteractor.getFavorites().first()
+                val isFavorite = favorites.any { it.trackId == initializedTrack.trackId }
+
+                initializedTrack.isFavorite = isFavorite
+                _track.value = initializedTrack
+
+                if (isTrackSelected) {
+                    saveTrack(initializedTrack)
                 }
+            } else {
+                Log.e(TAG, "track is null!")
             }
         }
     }

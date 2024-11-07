@@ -69,6 +69,7 @@ class FavoritesFragment : Fragment() {
 
         favoritesAdapter.onTrackClickListener = { track ->
             openTrack(track)
+
         }
     }
 
