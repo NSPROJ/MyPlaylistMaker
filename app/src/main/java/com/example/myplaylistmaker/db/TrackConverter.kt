@@ -15,7 +15,8 @@ class TrackConverter {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl
+            previewUrl = track.previewUrl,
+            addedTime = System.currentTimeMillis()
 
         )
     }
@@ -33,8 +34,7 @@ class TrackConverter {
             primaryGenreName = trackEntity.primaryGenreName,
             country = trackEntity.country,
             previewUrl = trackEntity.previewUrl,
-            addedTimestamp = System.currentTimeMillis()
-
+            addedTime = trackEntity.addedTime
         )
     }
 }

@@ -7,7 +7,7 @@ import com.example.myplaylistmaker.db.TracksEntity
 
 @Database(
     entities = [TracksEntity::class],
-    version = 1
+    version = 3
 )
 
 abstract class AppDataBase : RoomDatabase() {

@@ -15,8 +15,8 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String,
-    var isFavorite: Boolean = false,
-    val addedTimestamp: Long = System.currentTimeMillis()
+    val addedTime: Long,
+    var isFavorite: Boolean = false
 ) : Parcelable
 
 

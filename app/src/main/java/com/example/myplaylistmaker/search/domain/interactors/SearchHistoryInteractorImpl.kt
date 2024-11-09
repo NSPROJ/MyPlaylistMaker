@@ -19,8 +19,4 @@ class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepositor
     override fun getHistory(): ArrayList<Track> {
         return repository.getHistory()
     }
-
-    override fun getTracksFlow(): Flow<List<Track>> {
-        return repository.getTracksFlow()
-    }
 }

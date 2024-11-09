@@ -8,7 +8,7 @@ import com.example.myplaylistmaker.player.ui.TrackViewHolder
 import com.example.myplaylistmaker.search.domain.Track
 
 class TrackAdapter(
-    private var data: MutableList<Track>,
+    private val data: MutableList<Track>,
     private val onTrackSelectedHistory: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
@@ -28,4 +28,5 @@ class TrackAdapter(
     override fun getItemCount(): Int {
         return data.size
     }
+
 }

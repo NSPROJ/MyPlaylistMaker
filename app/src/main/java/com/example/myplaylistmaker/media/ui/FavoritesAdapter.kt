@@ -9,7 +9,7 @@ import com.example.myplaylistmaker.search.domain.Track
 
 
 class FavoritesAdapter(
-    private val data: List<Track>,
+    private var data: List<Track>,
     var onTrackClickListener: (Track) -> Unit,
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 

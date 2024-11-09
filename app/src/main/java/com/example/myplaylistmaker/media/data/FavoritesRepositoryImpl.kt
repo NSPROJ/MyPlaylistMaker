@@ -7,7 +7,6 @@ import com.example.myplaylistmaker.media.domain.repositories.FavoritesRepository
 import com.example.myplaylistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
     private val appDataBase: AppDataBase,
@@ -15,14 +14,12 @@ class FavoritesRepositoryImpl(
 ) : FavoritesRepository {
 
     override suspend fun getFavorites(): Flow<List<Track>> = flow {
-        val favourites = appDataBase.tracksDao().getAllTracks()
-        val tracks = convertFromEntity(favourites)
+        val favorites = appDataBase.tracksDao().getAllTracksOrderedByAddedTime()
+        val tracks = convertFromEntity(favorites)
         for (i in tracks) {
             i.isFavorite = true
         }
         emit(tracks)
-    }.map { trackList ->
-        trackList.sortedByDescending { it.addedTimestamp }
     }
 
     override suspend fun insertFavorite(track: Track) {

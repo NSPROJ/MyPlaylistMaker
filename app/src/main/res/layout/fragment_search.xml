@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/WhiteBackgroundLinearLayoutStyle"
     android:orientation="vertical"
-    android:visibility="visible"
     tools:context=".search.ui.SearchFragment"
-    tools:visibility="visible">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"

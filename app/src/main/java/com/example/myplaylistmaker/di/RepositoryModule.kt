@@ -16,8 +16,8 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    single<SearchRepository> { SearchRepositoryImpl(get(), get()) }
-    single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get(), get()) }
+    single<SearchRepository> { SearchRepositoryImpl(get()) }
+    single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get()) }
     single<ThemeRepository> { ThemeRepositoryImpl() }
     single<TrackRepository> { TrackRepositoryImpl(androidContext()) }
     factory { TrackConverter() }
