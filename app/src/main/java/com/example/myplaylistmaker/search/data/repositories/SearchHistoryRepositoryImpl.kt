@@ -6,7 +6,8 @@ import com.example.myplaylistmaker.search.domain.repositories.SearchHistoryRepos
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) :
+class SearchHistoryRepositoryImpl(
+    private val sharedPreferences: SharedPreferences) :
     SearchHistoryRepository {
 
     private val gson = Gson()
@@ -43,4 +44,5 @@ class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferenc
         val historyJson = gson.toJson(trackList)
         sharedPreferences.edit().putString(historyKey, historyJson).apply()
     }
+
 }

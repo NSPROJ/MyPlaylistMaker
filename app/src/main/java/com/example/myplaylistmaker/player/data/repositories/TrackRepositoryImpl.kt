@@ -48,7 +48,8 @@ class TrackRepositoryImpl(private val context: Context) : TrackRepository {
             releaseDate = sharedPreferences.getString(RELEASE_DATE_KEY, "")!!,
             primaryGenreName = sharedPreferences.getString(PRIMARY_GENRE_NAME_KEY, "")!!,
             country = sharedPreferences.getString(COUNTRY_KEY, "")!!,
-            previewUrl = sharedPreferences.getString(PREVIEW_URL_KEY, "")!!
+            previewUrl = sharedPreferences.getString(PREVIEW_URL_KEY, "")!!,
+            addedTime = System.currentTimeMillis()
         )
     }
 }

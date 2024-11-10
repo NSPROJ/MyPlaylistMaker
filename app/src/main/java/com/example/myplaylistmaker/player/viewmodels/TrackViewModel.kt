@@ -1,23 +1,60 @@
 package com.example.myplaylistmaker.player.viewmodels
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myplaylistmaker.media.domain.interactors.FavoritesInteractor
 import com.example.myplaylistmaker.player.domain.api.TrackInteractor
 import com.example.myplaylistmaker.search.domain.Track
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewModel(private val trackInteractor: TrackInteractor) : ViewModel() {
+class TrackViewModel(
+    private val trackInteractor: TrackInteractor,
+    private val favoritesInteractor: FavoritesInteractor
+) : ViewModel() {
 
     private val _track = MutableLiveData<Track?>()
-    val track: MutableLiveData<Track?> = _track
+    val track: LiveData<Track?> = _track
 
-    fun initTrack(intentTrack: Track?) {
-        if (intentTrack != null) {
-            _track.value = intentTrack
-            saveTrack(intentTrack)
-        } else {
-            _track.value = getSavedTrack()
+    fun toggleFavorite() {
+        val currentTrack = _track.value ?: return
+
+        viewModelScope.launch {
+            currentTrack.isFavorite = !currentTrack.isFavorite
+
+            if (currentTrack.isFavorite) {
+                favoritesInteractor.insertFavorite(currentTrack)
+            } else {
+                favoritesInteractor.deleteFavorite(currentTrack)
+            }
+
+            _track.value = currentTrack
+        }
+    }
+
+    fun initTrack(intentTrack: Track?, isTrackSelected: Boolean) {
+        viewModelScope.launch {
+            val initializedTrack = intentTrack ?: getSavedTrack()
+
+            if (initializedTrack != null) {
+                val favorites = favoritesInteractor.getFavorites().first()
+                val isFavorite = favorites.any { it.trackId == initializedTrack.trackId }
+
+                initializedTrack.isFavorite = isFavorite
+                _track.value = initializedTrack
+
+                if (isTrackSelected) {
+                    saveTrack(initializedTrack)
+                }
+            } else {
+                Log.e(TAG, "track is null!")
+            }
         }
     }
 
@@ -32,7 +69,7 @@ class TrackViewModel(private val trackInteractor: TrackInteractor) : ViewModel()
     fun formatReleaseDate(date: String): String {
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+            val formatter = SimpleDateFormat("yyyy", Locale.getDefault())
             val parsedDate = parser.parse(date)
             if (parsedDate != null) {
                 formatter.format(parsedDate)

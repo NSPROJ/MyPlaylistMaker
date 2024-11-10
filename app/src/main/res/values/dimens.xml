@@ -58,4 +58,5 @@
     <dimen name="_22dp">22dp</dimen>
     <dimen name="_46dp">46dp</dimen>
     <dimen name="_1dp">1dp</dimen>
+    <dimen name="_like_dp">101dp</dimen>
 </resources>

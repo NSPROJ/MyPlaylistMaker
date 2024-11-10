@@ -3,6 +3,7 @@
 package com.example.myplaylistmaker.player.viewmodels
 
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -14,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -43,12 +45,17 @@ class PlayerViewModel : ViewModel(), LifecycleObserver {
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
     }
 
-    fun initMediaPlayer(trackUrl: String, duration: Long) {
-        mediaPlayer.apply {
-            setDataSource(trackUrl)
-            prepareAsync()
-            seekTo(savedPosition)
-            setOnCompletionListener { onPlaybackComplete() }
+    fun initMediaPlayer(trackUrl: String, duration: Long = 0) {
+        try {
+            mediaPlayer.apply {
+                reset()
+                setDataSource(trackUrl)
+                prepareAsync()
+                seekTo(savedPosition)
+                setOnCompletionListener { onPlaybackComplete() }
+            }
+        } catch (e: IOException) {
+            Log.e("PlayerViewModel", "Ошибка MediaPlayer: ${e.message}")
         }
         _trackDuration.value = SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
     }

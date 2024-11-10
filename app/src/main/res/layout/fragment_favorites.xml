@@ -9,19 +9,32 @@
     android:background="@color/whites"
     tools:context=".media.ui.FavoritesFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/FavoritesRecyclerView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
     <ImageView
         android:id="@+id/placeholder"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_125dp"
         android:src="@drawable/ic_placeholder_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/FavoritesRecyclerView"
+        />
 
     <TextView
-        android:id="@+id/placeholder_text"
+        android:id="@+id/placeholderT"
         style="@style/PlaceholderText"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16dp"

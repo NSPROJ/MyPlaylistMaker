@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     kotlin("plugin.parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -49,9 +50,16 @@ android {
             exclude("DebugProbesKt.bin")
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
+    ksp(libs.androidx.room.compiler.v250)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.viewpager2)

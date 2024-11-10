@@ -1,4 +1,4 @@
-package com.example.myplaylistmaker.search.ui.adapters
+package com.example.myplaylistmaker.media.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,13 +7,15 @@ import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.player.ui.TrackViewHolder
 import com.example.myplaylistmaker.search.domain.Track
 
-class TrackAdapter(
-    private val data: MutableList<Track>,
-    private val onTrackSelectedHistory: (Track) -> Unit
+
+class FavoritesAdapter(
+    private var data: List<Track>,
+    var onTrackClickListener: (Track) -> Unit,
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.track_items, parent, false)
+        val layoutInspector = LayoutInflater.from(parent.context)
+        val view = layoutInspector.inflate(R.layout.favorite_items, parent, false)
         return TrackViewHolder(view)
     }
 
@@ -21,12 +23,11 @@ class TrackAdapter(
         val track = data[position]
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            onTrackSelectedHistory(track)
+            onTrackClickListener.invoke(track)
         }
     }
 
     override fun getItemCount(): Int {
         return data.size
     }
-
 }

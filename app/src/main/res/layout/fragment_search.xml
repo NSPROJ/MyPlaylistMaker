@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/WhiteBackgroundLinearLayoutStyle"
     android:orientation="vertical"
-    android:visibility="visible"
     tools:context=".search.ui.SearchFragment"
-    tools:visibility="visible">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,8 +79,9 @@
             android:id="@+id/button_clear"
             style="@style/RefreshButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/_50dp"
-            android:layout_marginTop="@dimen/button_size"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:fontFamily="@font/ys_display_medium"
             android:padding="6dp"
             android:text="@string/clear_hist"

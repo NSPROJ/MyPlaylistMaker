@@ -9,7 +9,7 @@ import com.example.myplaylistmaker.search.domain.Track
 
 class SearchHistoryAdapter(
     private var historyList: List<Track>,
-    private val onTrackSelected: (Track) -> Unit
+    private var onTrackSelected: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -30,6 +30,5 @@ class SearchHistoryAdapter(
 
     fun updateHistoryList(newHistoryList: List<Track>) {
         historyList = newHistoryList
-        notifyDataSetChanged()
     }
 }
