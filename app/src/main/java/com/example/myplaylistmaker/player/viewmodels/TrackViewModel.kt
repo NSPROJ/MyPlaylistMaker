@@ -69,7 +69,7 @@ class TrackViewModel(
     fun formatReleaseDate(date: String): String {
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+            val formatter = SimpleDateFormat("yyyy", Locale.getDefault())
             val parsedDate = parser.parse(date)
             if (parsedDate != null) {
                 formatter.format(parsedDate)
