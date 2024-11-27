@@ -20,5 +20,5 @@ val viewModelModule = module {
     viewModel { ThemeViewModel(get()) }
     viewModel { PlaylistsViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
-    viewModel { NewPlayViewModel(get()) }
+    viewModel { NewPlayViewModel(get(), get()) }
 }

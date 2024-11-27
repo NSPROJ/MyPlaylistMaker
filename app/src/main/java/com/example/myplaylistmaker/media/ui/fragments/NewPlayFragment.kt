@@ -34,7 +34,6 @@ import com.example.myplaylistmaker.databinding.FragmentNewPlayBinding
 import com.example.myplaylistmaker.media.domain.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.io.FileOutputStream
 
 class NewPlayFragment : Fragment() {
 
@@ -87,16 +86,19 @@ class NewPlayFragment : Fragment() {
                             MultiTransformation(
                                 CenterCrop(),
                                 RoundedCorners(
-                                    transformDpToPx(
-                                        8f,
-                                    )
+                                    transformDpToPx(8f)
                                 )
                             )
                         )
                     )
                     .into(binding.playListImage)
-                saveImageToStorage(uri)
-            } else  {
+
+                if (viewModel.saveImage(uri, "${binding.playlistName.text}.jpg")) {
+                    Toast.makeText(requireContext(), "Изображение успешно сохранено!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка при сохранении изображения", Toast.LENGTH_SHORT).show()
+                }
+            } else {
                 Toast.makeText(requireContext(), "Изображение не выбрано", Toast.LENGTH_SHORT).show()
                 isImageAdded = false
             }
@@ -202,30 +204,6 @@ class NewPlayFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun saveImageToStorage(uri: Uri) {
-        val contentResolver = requireActivity().applicationContext.contentResolver
-        val path = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlist_images")
-
-        if (!path.exists()) {
-            path.mkdirs()
-        }
-
-        val file = File(path, "$binding")
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                FileOutputStream(file).use { outputStream ->
-                    BitmapFactory.decodeStream(inputStream).compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-                    outputStream.flush()
-                }
-            }
-
-            Toast.makeText(requireContext(), "Изображение успешно сохранено!", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Ошибка при сохранении изображения: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun showConfirmationDialog() {
