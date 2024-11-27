@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -16,19 +18,28 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.databinding.ActivityPlayerBinding
+import com.example.myplaylistmaker.db.PlaylistState
+import com.example.myplaylistmaker.db.PlaylistState.Content
+import com.example.myplaylistmaker.media.domain.Playlist
+import com.example.myplaylistmaker.media.ui.adapters.PlaylistTracksAdapter
+import com.example.myplaylistmaker.media.ui.fragments.NewPlayFragment
 import com.example.myplaylistmaker.player.viewmodels.PlayerViewModel
 import com.example.myplaylistmaker.player.viewmodels.TrackViewModel
 import com.example.myplaylistmaker.search.domain.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
+
 class PlayerActivity : AppCompatActivity() {
+
     companion object {
         const val TRACK_KEY = "track"
     }
 
-    private var _binding: ActivityPlayerBinding? = null
-    private val binding get() = _binding!!
+    private val playlist = ArrayList<Playlist>()
+    private val adapterPlaylistTracks = PlaylistTracksAdapter(playlist, ::onPlaylistItemListener)
+    private lateinit var binding: ActivityPlayerBinding
     private val viewModel by viewModel<PlayerViewModel>()
     private val trackViewModel by viewModel<TrackViewModel>()
     private lateinit var liked: ImageView
@@ -36,16 +47,20 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var pauseButton: ImageView
     private lateinit var progressTextView: TextView
     private lateinit var favoriteButton: ImageView
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityPlayerBinding.inflate(layoutInflater).apply { setContentView(root) }
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         playButton = binding.imageView3
         pauseButton = binding.imageView3pause
         progressTextView = binding.timeDur
         favoriteButton = binding.favImage1
         liked = binding.favLiked
+
+        binding.recyclerView.adapter = adapterPlaylistTracks
 
         val intentTrack = intent.getParcelableExtra<Track>(TRACK_KEY)
         if (intentTrack != null) {
@@ -59,6 +74,55 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         lifecycle.addObserver(viewModel)
+
+        trackViewModel.getPlaylistState().observe(this) { state ->
+            checkAndRender(state)
+        }
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback()
+        {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.sheetLine.visibility = View.GONE
+                        binding.recyclerView.visibility = View.GONE
+                        binding.addToPlaylist.visibility = View.GONE
+                        binding.NewPlaylist.visibility = View.GONE
+                        binding.overlay99.visibility = View.GONE
+            }
+                    else -> {
+                        trackViewModel.loadPlaylist()
+                        adapterPlaylistTracks.notifyDataSetChanged()
+                        binding.sheetLine.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.addToPlaylist.visibility = View.VISIBLE
+                        binding.NewPlaylist.visibility = View.VISIBLE
+                        binding.overlay99.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay99.alpha = slideOffset
+            }
+        })
+
+        binding.imageView2.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.NewPlaylist.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, NewPlayFragment())
+                    .addToBackStack(null)
+                    .commit()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
 
         trackViewModel.track.observe(this) { track ->
             if (track != null) {
@@ -76,6 +140,12 @@ class PlayerActivity : AppCompatActivity() {
 
         observeViewModel()
         updateUI()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        trackViewModel.loadPlaylist()
+        adapterPlaylistTracks.notifyDataSetChanged()
     }
 
 
@@ -194,5 +264,29 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
+    }
+
+    private fun checkAndRender(state: PlaylistState) {
+        when(state) {
+            is PlaylistState.Error -> binding.recyclerView.visibility = View.GONE
+            is Content -> {
+                playlist.clear()
+                playlist.addAll(state.playlist)
+                adapterPlaylistTracks.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun onPlaylistItemListener(playlist: Playlist) {
+        val currentTrackId = trackViewModel.track.value?.trackId ?: return
+
+        if (trackViewModel.isTrackInPlaylist(currentTrackId.toInt(), playlist)) {
+            Toast.makeText(this, getString(R.string.already_added, playlist.playlistName), Toast.LENGTH_SHORT).show()
+        } else {
+            trackViewModel.updatePlaylist(trackViewModel.track.value!!, playlist)
+            Toast.makeText(this, getString(R.string.added, playlist.playlistName), Toast.LENGTH_SHORT).show()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            adapterPlaylistTracks.notifyDataSetChanged()
+        }
     }
 }

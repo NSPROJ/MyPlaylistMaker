@@ -56,6 +56,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.peko)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     ksp(libs.androidx.room.compiler.v250)
     implementation(libs.androidx.room.runtime)
     implementation(libs.room.ktx)

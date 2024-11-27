@@ -22,12 +22,15 @@ carUiLib = "2.6.0"
 composePreviewRenderer = "0.0.1-alpha01"
 materialVersion = "1.6.1"
 navigationUiKtxVersion = "2.8.3"
+peko = "3.0.5"
 retrofit = "2.11.0"
 roomCompiler = "2.6.1"
 roomCompilerVersion = "2.6.1"
 roomKtx = "2.6.1"
 uiDesktop = "1.7.0"
 viewpager2 = "1.1.0"
+legacySupportV4 = "1.0.0"
+lifecycleLivedataKtx = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,9 +61,12 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
 compose-preview-renderer = { group = "com.android.tools.compose", name = "compose-preview-renderer", version.ref = "composePreviewRenderer" }
 material-v161 = { module = "com.google.android.material:material", version = "1.12.0" }
+peko = { module = "com.markodevcic:peko", version.ref = "peko" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

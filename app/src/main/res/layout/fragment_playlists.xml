@@ -6,10 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whites"
-    tools:context=".media.ui.PlaylistsFragment">
+    tools:context=".media.ui.fragments.PlaylistsFragment">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/PlaylistsRecyclerView"
+        app:layout_constraintTop_toBottomOf="@id/createButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_10dp"
+        tools:listitem="@layout/playlist_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        />
+
 
     <Button
-        android:id="@+id/button_create"
+        android:id="@+id/createButton"
         style="@style/RefreshButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +46,7 @@
         android:src="@drawable/ic_placeholder_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_create" />
+        app:layout_constraintTop_toBottomOf="@+id/createButton" />
 
     <TextView
         android:id="@+id/media_placeholder_tv"

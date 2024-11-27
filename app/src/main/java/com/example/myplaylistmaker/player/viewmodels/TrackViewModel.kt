@@ -6,7 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myplaylistmaker.db.PlaylistState
+import com.example.myplaylistmaker.media.domain.Playlist
 import com.example.myplaylistmaker.media.domain.interactors.FavoritesInteractor
+import com.example.myplaylistmaker.media.domain.interactors.PlaylistInteractor
 import com.example.myplaylistmaker.player.domain.api.TrackInteractor
 import com.example.myplaylistmaker.search.domain.Track
 import kotlinx.coroutines.flow.first
@@ -16,11 +19,53 @@ import java.util.Locale
 
 class TrackViewModel(
     private val trackInteractor: TrackInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val _track = MutableLiveData<Track?>()
     val track: LiveData<Track?> = _track
+    private val playlistState = MutableLiveData<PlaylistState>()
+    fun getPlaylistState(): LiveData<PlaylistState> = playlistState
+
+    fun loadPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist()
+                .collect { playlists -> processResult(playlists) }
+
+        }
+    }
+
+
+    fun isTrackInPlaylist(trackIdToCheck: Int, playlist: Playlist): Boolean {
+        return playlist.trackId.contains(trackIdToCheck)
+    }
+
+    fun updatePlaylist(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            if (isTrackInPlaylist(track.trackId.toInt(), playlist)) {
+                playlist.trackId.remove(track.trackId.toInt())
+                playlistInteractor
+                playlist.count--
+            } else {
+                playlist.trackId.add(track.trackId.toInt())
+            }
+            playlistInteractor.updatePlaylist(track, playlist)
+        }
+    }
+
+
+    private fun processResult(playlists: List<Playlist>) {
+        if (playlists.isEmpty()) {
+            renderState(PlaylistState.Error("empty list"))
+        } else {
+            renderState(PlaylistState.Content(playlists))
+        }
+    }
+
+    private fun renderState(state: PlaylistState) {
+        playlistState.postValue(state)
+    }
 
     fun toggleFavorite() {
         val currentTrack = _track.value ?: return
