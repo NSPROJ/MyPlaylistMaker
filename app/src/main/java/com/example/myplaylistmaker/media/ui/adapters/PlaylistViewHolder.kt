@@ -39,12 +39,13 @@ class PlaylistViewHolder(private val binding: PlaylistItemBinding): RecyclerView
     }
 
     private fun getEnding(number: Int): String {
-
+        val lastTwoDigits = number % 100
         val lastDigit = number % 10
-        return when (lastDigit) {
 
-            1 -> "трек"
-            2, 3, 4 -> "трека"
+        return when {
+            lastTwoDigits in 11..14 -> "треков"
+            lastDigit == 1 -> "трек"
+            lastDigit in 2..4 -> "трека"
             else -> "треков"
         }
     }

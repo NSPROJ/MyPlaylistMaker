@@ -10,8 +10,7 @@ class PlaylistTracksAdapter(
 
     private val data: List<Playlist>,
     private val onPlaylistItemListener: (Playlist) -> Unit
-) :
-    RecyclerView.Adapter<PlaylistTracksViewHolder>() {
+) : RecyclerView.Adapter<PlaylistTracksViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistTracksViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)

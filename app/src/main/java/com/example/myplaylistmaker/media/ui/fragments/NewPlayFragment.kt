@@ -2,6 +2,7 @@ package com.example.myplaylistmaker.media.ui.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -22,7 +23,6 @@ import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -238,7 +238,18 @@ class NewPlayFragment : Fragment() {
         builder.setNegativeButton("Отмена") { dialog, _ ->
             dialog.dismiss()
         }
-        builder.show()
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        val textColor = if (isNightModeEnabled()) android.graphics.Color.WHITE else android.graphics.Color.BLACK
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(textColor)
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(textColor)
+    }
+
+    private fun isNightModeEnabled(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun handleBackNavigation() {
