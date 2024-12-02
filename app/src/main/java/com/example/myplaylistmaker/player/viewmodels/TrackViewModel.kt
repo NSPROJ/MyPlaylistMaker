@@ -26,6 +26,7 @@ class TrackViewModel(
     private val _track = MutableLiveData<Track?>()
     val track: LiveData<Track?> = _track
     private val playlistState = MutableLiveData<PlaylistState>()
+
     fun getPlaylistState(): LiveData<PlaylistState> = playlistState
 
     fun loadPlaylist() {
@@ -49,6 +50,7 @@ class TrackViewModel(
                 playlist.count--
             } else {
                 playlist.trackId.add(track.trackId.toInt())
+                playlistInteractor.insertTrack(track)
             }
             playlistInteractor.updatePlaylist(track, playlist)
         }

@@ -21,7 +21,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class PlaylistsFragment : Fragment() {
 
     private var _binding: FragmentPlaylistsBinding? = null
-    private val binding get() = _binding ?: throw RuntimeException("FragmentPlaylistsBinding == null")
+    private val binding
+        get() = _binding ?: throw RuntimeException("FragmentPlaylistsBinding == null")
 
     private lateinit var createButton: Button
     private lateinit var textPlaceholder: View
@@ -48,9 +49,10 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.PlaylistsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.PlaylistsRecyclerView.adapter = playlistAdapter
+        binding.playlistsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.playlistsRecyclerView.adapter = playlistAdapter
         viewModel.loadPlaylists()
+        playlistAdapter.notifyDataSetChanged()
 
         createButton = binding.createButton
         textPlaceholder = binding.mediaPlaceholderTv
@@ -65,23 +67,24 @@ class PlaylistsFragment : Fragment() {
 
         viewModel.visibilityState.observe(viewLifecycleOwner) { visible ->
             if (visible) {
-                binding.PlaylistsRecyclerView.visibility = View.VISIBLE
+                binding.playlistsRecyclerView.visibility = View.VISIBLE
                 binding.placeholder.visibility = View.GONE
                 textPlaceholder.visibility = View.GONE
             } else {
-                binding.PlaylistsRecyclerView.visibility = View.GONE
+                binding.playlistsRecyclerView.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
                 textPlaceholder.visibility = View.VISIBLE
             }
         }
 
         viewModel.playlistState.observe(viewLifecycleOwner) {
-            when(it) {
+            when (it) {
                 is PlaylistState.Content -> {
                     playlists.clear()
                     playlists.addAll(it.playlist)
                     playlistAdapter.notifyDataSetChanged()
                 }
+
                 is PlaylistState.Error -> {
                 }
             }
@@ -93,7 +96,8 @@ class PlaylistsFragment : Fragment() {
         super.onResume()
         viewModel.loadPlaylists()
         val activity = requireActivity() as AppCompatActivity
-        activity.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+        activity.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility =
+            View.VISIBLE
     }
 
     override fun onDestroyView() {

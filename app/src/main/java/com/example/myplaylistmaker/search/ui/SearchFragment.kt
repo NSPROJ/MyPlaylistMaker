@@ -94,6 +94,7 @@ class SearchFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = trackAdapter
     }
+
     private fun hideHistory() {
         historyTitle.visibility = View.GONE
         buttonClear.visibility = View.GONE
@@ -205,8 +206,10 @@ class SearchFragment : Fragment() {
 
     private fun updateTrackList(newTrackList: List<Track>?) {
         trackList.clear()
-        newTrackList?.let { trackList.addAll(it)
-            trackAdapter.notifyItemRangeChanged(0, trackList.size)}
+        newTrackList?.let {
+            trackList.addAll(it)
+            trackAdapter.notifyItemRangeChanged(0, trackList.size)
+        }
     }
 
 

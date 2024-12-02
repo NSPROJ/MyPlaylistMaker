@@ -60,5 +60,14 @@
     <string name="already_added">Трек уже добавлен в плейлист %1$s</string>
     <string name="new_play_list">Новый плейлист</string>
     <string name="add_to_playlist_new">Добавить в плейлист</string>
+    <string name="playlist_str">Плейлист %1$s успешно создан!</string>
+    <string name="quit_question">Завершить создание плейлиста?</string>
+    <string name="lost_action">Все несохраненные данные будут потеряны</string>
+    <string name="close_toast">Завершить</string>
+    <string name="save_successful">Изображение успешно сохранено!</string>
+    <string name="error_for_save_image">Ошибка при сохранении изображения</string>
+    <string name="no_choose">Изображение не выбрано</string>
+    <string name="do_b">Название*</string>
+    <string name="desc">Описание</string>
 
 </resources>

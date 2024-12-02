@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,63 +13,61 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/newPlayListToolbar"
-            app:navigationIcon="@drawable/strelka"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
             app:buttonGravity="center_vertical"
+            app:navigationIcon="@drawable/strelka"
             app:title="@string/new_playlist_title"
-            app:titleMarginStart="8dp"/>
+            app:titleMarginStart="8dp" />
 
         <ImageView
             android:id="@+id/playListImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="@dimen/_32dp"
-            android:src="@drawable/playlist_holder"
             android:scaleType="centerCrop"
-            android:layout_gravity="center"
-            app:layout_constraintDimensionRatio="H,1:1"/>
+            android:src="@drawable/playlist_holder"
+            app:layout_constraintDimensionRatio="H,1:1" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/playlist_name"
-            android:layout_width="wrap_content"
+            style="@style/CustomOutline"
+            android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="32dp"
             android:layout_marginEnd="16dp"
-            android:layout_gravity="center"
-            android:lines="1"
-            android:inputType="text"
-            android:hint="@string/name"
-            android:textColorHint="@color/blacks"
-            android:textColor="@color/blacks"
+            android:hint="@string/do_b"
             android:textSize="16sp"
-            android:paddingStart="16dp"
-            android:textCursorDrawable="@drawable/cursor"
-            android:background="@drawable/editable_false"/>
+            app:boxStrokeWidth="1dp">
 
-        <EditText
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/name_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/playListDescription"
-            android:layout_width="wrap_content"
+            style="@style/CustomOutline"
+            android:layout_width="328dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_gravity="center"
-            android:lines="1"
-            android:inputType="text"
-            android:textColorHint="@color/blacks"
-            android:textColor="@color/blacks"
-            android:textSize="16sp"
-            android:hint="@string/description"
-            android:paddingStart="16dp"
-            android:textCursorDrawable="@drawable/cursor"
-            android:background="@drawable/editable_false"/>
+            android:hint="@string/desc"
+            android:textSize="16sp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <android.widget.Button
             android:id="@+id/createPlaylist"
@@ -79,9 +77,9 @@
             android:layout_marginStart="17dp"
             android:layout_marginTop="150dp"
             android:layout_marginEnd="17dp"
+            android:layout_marginBottom="64dp"
             android:background="@drawable/create_pl_button"
             android:enabled="false"
-            android:layout_marginBottom="34dp"
             android:text="@string/create"
             android:textAllCaps="false"
             android:textColor="#FFFFFF" />

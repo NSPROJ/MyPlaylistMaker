@@ -10,17 +10,16 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/PlaylistsRecyclerView"
-        app:layout_constraintTop_toBottomOf="@id/createButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/_10dp"
-        tools:listitem="@layout/playlist_item"
+        android:id="@+id/playlists_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/rv_playlists_high"
+        android:layout_height="match_parent"
+        android:layout_marginTop="84dp"
         android:orientation="vertical"
-        />
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createButton"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/playlist_item" />
 
     <Button
         android:id="@+id/createButton"

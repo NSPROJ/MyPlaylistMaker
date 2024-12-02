@@ -11,7 +11,8 @@ import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.databinding.BottomSheetItemBinding
 import com.example.myplaylistmaker.media.domain.Playlist
 
-class PlaylistTracksViewHolder(private val binding: BottomSheetItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class PlaylistTracksViewHolder(private val binding: BottomSheetItemBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     @SuppressLint("SetTextI18n")
     fun bind(playlist: Playlist) {
