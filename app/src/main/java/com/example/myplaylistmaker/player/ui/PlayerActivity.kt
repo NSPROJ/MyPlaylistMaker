@@ -83,8 +83,8 @@ class PlayerActivity : AppCompatActivity() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback()
-        {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
@@ -93,7 +93,8 @@ class PlayerActivity : AppCompatActivity() {
                         binding.addToPlaylist.visibility = View.GONE
                         binding.NewPlaylist.visibility = View.GONE
                         binding.overlay99.visibility = View.GONE
-            }
+                    }
+
                     else -> {
                         trackViewModel.loadPlaylist()
                         adapterPlaylistTracks.notifyDataSetChanged()
@@ -117,9 +118,9 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.NewPlaylist.setOnClickListener {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, NewPlayFragment())
-                    .addToBackStack(null)
-                    .commit()
+                .replace(R.id.fragmentContainer, NewPlayFragment())
+                .addToBackStack(null)
+                .commit()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
@@ -127,7 +128,8 @@ class PlayerActivity : AppCompatActivity() {
         trackViewModel.track.observe(this) { track ->
             if (track != null) {
                 viewModel.initMediaPlayer(track.previewUrl, track.trackTimeMillis)
-            }}
+            }
+        }
 
         favoriteButton.setOnClickListener {
             trackViewModel.toggleFavorite()
@@ -267,7 +269,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun checkAndRender(state: PlaylistState) {
-        when(state) {
+        when (state) {
             is PlaylistState.Error -> binding.recyclerView.visibility = View.GONE
             is Content -> {
                 playlist.clear()
@@ -281,10 +283,18 @@ class PlayerActivity : AppCompatActivity() {
         val currentTrackId = trackViewModel.track.value?.trackId ?: return
 
         if (trackViewModel.isTrackInPlaylist(currentTrackId.toInt(), playlist)) {
-            Toast.makeText(this, getString(R.string.already_added, playlist.playlistName), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.already_added, playlist.playlistName),
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
             trackViewModel.updatePlaylist(trackViewModel.track.value!!, playlist)
-            Toast.makeText(this, getString(R.string.added, playlist.playlistName), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.added, playlist.playlistName),
+                Toast.LENGTH_SHORT
+            ).show()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             adapterPlaylistTracks.notifyDataSetChanged()
         }

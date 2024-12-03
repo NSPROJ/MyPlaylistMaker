@@ -10,7 +10,10 @@ import com.example.myplaylistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class PlaylistRepositoryImpl(private val appDataBase: AppDataBase, private val playlistConverter: PlaylistConverter):
+class PlaylistRepositoryImpl(
+    private val appDataBase: AppDataBase,
+    private val playlistConverter: PlaylistConverter
+) :
     PlaylistRepository {
 
     private fun convertToPlaylist(playlist: List<PlaylistsEntity>): List<Playlist> {

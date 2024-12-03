@@ -259,8 +259,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_like_dp"
-                android:visibility="invisible"
                 android:src="@drawable/like_red"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="@id/guideline_right"
                 app:layout_constraintHorizontal_bias="0.757"
                 app:layout_constraintStart_toEndOf="@id/imageView3"
@@ -280,72 +280,73 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+    </ScrollView>
 
-    <View android:id="@+id/overlay99"
+    <View
+        android:id="@+id/overlay99"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
-            android:id="@+id/playlists_bottom_sheet"
+        android:id="@+id/playlists_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/sheet_background"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="500dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+
+        <View
+            android:id="@+id/sheet_line"
+            android:layout_width="50dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/icon_padding"
+            android:background="@drawable/sheet_line"
+
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/addToPlaylist"
+            style="@style/PlaceholderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/ys_display_medium"
+
+            android:text="@string/add_to_playlist_new"
+            android:textSize="@dimen/_19sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/NewPlaylist"
+            style="@style/RefreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="28dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:padding="6dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text="@string/new_play_list"
+            android:textSize="@dimen/_14sp"
+
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/sheet_background"
-            android:orientation="vertical"
-            app:behavior_hideable="true"
-            app:behavior_peekHeight="500dp"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-
-            <View
-                android:id="@+id/sheet_line"
-                android:layout_width="50dp"
-                android:layout_height="4dp"
-                android:layout_marginTop="@dimen/icon_padding"
-                android:layout_gravity="center"
-                android:visibility="gone"
-
-                android:background="@drawable/sheet_line"/>
-
-            <TextView
-                android:id="@+id/addToPlaylist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_to_playlist_new"
-                android:layout_marginTop="30dp"
-                android:layout_gravity="center"
-                android:visibility="gone"
-
-                style="@style/PlaceholderText"
-                android:fontFamily="@font/ys_display_medium"
-                android:textSize="@dimen/_19sp"/>
-
-            <Button
-                android:id="@+id/NewPlaylist"
-                android:text="@string/new_play_list"
-                style="@style/RefreshButton"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/_14sp"
-                android:fontFamily="@font/ys_display_medium"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="28dp"
-                android:padding="6dp"
-                android:paddingStart="14dp"
-                android:visibility="gone"
-
-                android:paddingEnd="14dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        </LinearLayout>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

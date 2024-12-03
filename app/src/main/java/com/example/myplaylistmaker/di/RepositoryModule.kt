@@ -5,6 +5,7 @@ import com.example.myplaylistmaker.db.TrackConverter
 import com.example.myplaylistmaker.media.data.FavoritesRepositoryImpl
 import com.example.myplaylistmaker.media.data.PlaylistRepositoryImpl
 import com.example.myplaylistmaker.media.domain.repositories.FavoritesRepository
+import com.example.myplaylistmaker.media.domain.repositories.PlaylistDataRepository
 import com.example.myplaylistmaker.media.domain.repositories.PlaylistRepository
 import com.example.myplaylistmaker.player.data.repositories.TrackRepositoryImpl
 import com.example.myplaylistmaker.player.domain.repositories.TrackRepository

@@ -4,6 +4,6 @@
     android:viewportWidth="80"
     android:viewportHeight="80">
     <path
-        android:pathData="@string/add_fav"
-        android:fillColor="#AEAFB4"/>
+        android:fillColor="#AEAFB4"
+        android:pathData="@string/add_fav" />
 </vector>

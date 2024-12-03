@@ -6,8 +6,8 @@
     <ImageView
         android:id="@+id/playlistImageV"
         style="@style/TrackImageViewStyle"
-        android:layout_height="45dp"
         android:layout_width="45dp"
+        android:layout_height="45dp"
         android:src="@drawable/krest" />
 
     <LinearLayout
@@ -18,10 +18,10 @@
 
         <TextView
             android:id="@+id/albumTitle"
+            style="@style/TrackTitleTextViewStyle"
             android:ellipsize="end"
             android:maxLines="1"
-            style="@style/TrackTitleTextViewStyle"
-            android:textColor="@color/blacks"/>
+            android:textColor="@color/blacks" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,11 +30,11 @@
 
             <TextView
                 android:id="@+id/track_count"
-                android:fontFamily="@font/ys_display_regular"
-                android:layout_marginStart="@dimen/_8dp"
                 style="@style/ArtistTimeTextViewStyle"
-                android:textColor="@color/greyss"
-                android:text="@string/_count" />
+                android:layout_marginStart="@dimen/_8dp"
+                android:fontFamily="@font/ys_display_regular"
+                android:text="@string/_count"
+                android:textColor="@color/greyss" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

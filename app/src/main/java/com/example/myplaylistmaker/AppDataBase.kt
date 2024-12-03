@@ -4,8 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.myplaylistmaker.db.PlaylistTracksDao
 import com.example.myplaylistmaker.db.PlaylistTracksEntity
-import com.example.myplaylistmaker.db.PlaylistsEntity
 import com.example.myplaylistmaker.db.PlaylistsDao
+import com.example.myplaylistmaker.db.PlaylistsEntity
 import com.example.myplaylistmaker.db.TracksDao
 import com.example.myplaylistmaker.db.TracksEntity
 

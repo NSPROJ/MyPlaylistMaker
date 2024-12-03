@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/_8dp"
         android:ellipsize="end"
         android:fontFamily="@font/ys_display_regular"
         android:gravity="center_horizontal"

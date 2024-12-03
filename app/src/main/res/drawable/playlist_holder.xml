@@ -17,5 +17,5 @@
 
     <item
         android:drawable="@drawable/test_vector"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 </layer-list>

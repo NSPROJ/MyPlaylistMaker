@@ -25,3 +25,4 @@ val interactorModule = module {
     single<FavoritesInteractor> { FavoritesInteractorImpl(get()) }
     single<PlaylistInteractor> { PlaylistInteractorImpl(get()) }
 }
+

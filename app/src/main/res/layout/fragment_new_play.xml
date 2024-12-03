@@ -44,6 +44,7 @@
             android:layout_marginEnd="16dp"
             android:hint="@string/do_b"
             android:textSize="16sp"
+            app:cursorColor="#3772E7"
             app:boxStrokeWidth="1dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -61,12 +62,14 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/desc"
+            app:cursorColor="#3772E7"
             android:textSize="16sp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <android.widget.Button

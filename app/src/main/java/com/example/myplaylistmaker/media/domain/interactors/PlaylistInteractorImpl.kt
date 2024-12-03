@@ -5,13 +5,14 @@ import com.example.myplaylistmaker.media.domain.repositories.PlaylistRepository
 import com.example.myplaylistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
-class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository) : PlaylistInteractor{
+class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository) :
+    PlaylistInteractor {
 
     override suspend fun getPlaylist(): Flow<List<Playlist>> {
         return playlistRepository.getPlaylist()
     }
 
-    override suspend fun insertPlaylist(playlist:Playlist) {
+    override suspend fun insertPlaylist(playlist: Playlist) {
         return playlistRepository.insertPlaylist(playlist)
     }
 

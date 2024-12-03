@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.myplaylistmaker.AppDataBase
+import com.example.myplaylistmaker.media.data.dto.AndroidImageStorageManager
+import com.example.myplaylistmaker.media.data.dto.ImageStorageManager
 import com.example.myplaylistmaker.search.data.network.ApiService
 import com.example.myplaylistmaker.search.data.network.NetworkClient
 import com.example.myplaylistmaker.search.data.network.RetrofitNetworkClient
@@ -15,6 +17,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
+
+    single <ImageStorageManager> { AndroidImageStorageManager(androidContext()) }
 
     single { provideSharedPreferences(androidContext(), "app_prefs") }
 

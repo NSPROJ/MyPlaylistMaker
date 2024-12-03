@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.databinding.PlaylistItemBinding
 import com.example.myplaylistmaker.media.domain.Playlist
 
-class PlaylistAdapter(private val data : List<Playlist>):RecyclerView.Adapter<PlaylistViewHolder>() {
+class PlaylistAdapter(private val data: List<Playlist>) :
+    RecyclerView.Adapter<PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
 

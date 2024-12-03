@@ -8,6 +8,6 @@ import androidx.room.OnConflictStrategy
 interface PlaylistTracksDao {
 
     @Insert(entity = PlaylistTracksEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun  insertPlaylistTracks(playlistTracksEntity: PlaylistTracksEntity)
+    suspend fun insertPlaylistTracks(playlistTracksEntity: PlaylistTracksEntity)
 
 }
