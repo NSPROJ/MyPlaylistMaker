@@ -1,4 +1,4 @@
-package com.example.myplaylistmaker.media.ui
+package com.example.myplaylistmaker.media.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myplaylistmaker.databinding.FragmentFavoritesBinding
 import com.example.myplaylistmaker.db.FavoritesState
+import com.example.myplaylistmaker.media.ui.adapters.FavoritesAdapter
 import com.example.myplaylistmaker.media.viewModels.FavoritesViewModel
 import com.example.myplaylistmaker.player.ui.PlayerActivity
 import com.example.myplaylistmaker.player.ui.PlayerActivity.Companion.TRACK_KEY

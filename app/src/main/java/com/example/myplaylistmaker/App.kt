@@ -7,6 +7,7 @@ import com.example.myplaylistmaker.di.repositoryModule
 import com.example.myplaylistmaker.di.viewModelModule
 import com.example.myplaylistmaker.settings.domain.api.ThemeInteractor
 import com.example.myplaylistmaker.settings.domain.repositories.ThemeRepository
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -20,7 +21,7 @@ class App : Application() {
             androidContext(this@App)
             modules(listOf(viewModelModule, appModule, repositoryModule, interactorModule))
         }
-
+        PermissionRequester.initialize(applicationContext)
         val themeInteractor: ThemeInteractor by inject()
         val darkTheme = get<ThemeRepository>().getSharedPreferencesThemeValue()
         themeInteractor.switchTheme(darkTheme)

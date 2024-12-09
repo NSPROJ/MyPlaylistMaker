@@ -4,7 +4,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/trackImageView"
+        android:id="@+id/playlistImageV"
         style="@style/TrackImageViewStyle"
         android:src="@drawable/krest" />
 
@@ -15,10 +15,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/trackTitleTextView"
+            android:id="@+id/albumTitle"
+            style="@style/TrackTitleTextViewStyle"
             android:ellipsize="end"
-            android:maxLines="1"
-            style="@style/TrackTitleTextViewStyle" />
+            android:maxLines="1" />
 
         <LinearLayout
             android:layout_width="match_parent"

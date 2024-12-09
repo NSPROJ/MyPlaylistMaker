@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="greyss">#FFFFFFFF</color>
     <color name="blacks">#FFFFFFFF</color>
     <color name="whites">#1A1B22</color>
+    <color name="sheet_line">#FFFFFF</color>
 </resources>

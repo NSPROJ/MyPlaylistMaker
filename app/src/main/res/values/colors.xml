@@ -10,4 +10,9 @@
     <color name="blacks">#FF000000</color>
     <color name="whites">#FFFFFFFF</color>
     <color name="YP_blue_light">#9FBBF3</color>
+    <color name="greyss">#AEAFB4</color>
+    <color name="sheet_line">#E6E8EB</color>
+    <color name="box_stroke_true">#3772E7</color>
+    <color name="box_stroke_night">#FFFFFF</color>
+    <color name="box_stroke_light">#AEAFB4</color>
 </resources>

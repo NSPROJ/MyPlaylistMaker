@@ -1,8 +1,12 @@
 package com.example.myplaylistmaker.di
 
+import com.example.myplaylistmaker.db.PlaylistConverter
 import com.example.myplaylistmaker.db.TrackConverter
 import com.example.myplaylistmaker.media.data.FavoritesRepositoryImpl
+import com.example.myplaylistmaker.media.data.PlaylistRepositoryImpl
 import com.example.myplaylistmaker.media.domain.repositories.FavoritesRepository
+import com.example.myplaylistmaker.media.domain.repositories.PlaylistDataRepository
+import com.example.myplaylistmaker.media.domain.repositories.PlaylistRepository
 import com.example.myplaylistmaker.player.data.repositories.TrackRepositoryImpl
 import com.example.myplaylistmaker.player.domain.repositories.TrackRepository
 import com.example.myplaylistmaker.search.data.repositories.SearchHistoryRepositoryImpl
@@ -21,5 +25,7 @@ val repositoryModule = module {
     single<ThemeRepository> { ThemeRepositoryImpl() }
     single<TrackRepository> { TrackRepositoryImpl(androidContext()) }
     factory { TrackConverter() }
+    factory { PlaylistConverter() }
     single<FavoritesRepository> { FavoritesRepositoryImpl(get(), get()) }
+    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get()) }
 }

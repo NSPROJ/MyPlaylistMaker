@@ -9,7 +9,6 @@ import com.example.myplaylistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.myplaylistmaker.search.domain.api.SearchInteractor
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class SearchViewModel(
     private val searchHistoryInteractor: SearchHistoryInteractor,
@@ -31,6 +30,7 @@ class SearchViewModel(
     init {
         updateSearchHistory()
     }
+
     fun clearTracks() {
         _tracks.value = emptyList()
     }
