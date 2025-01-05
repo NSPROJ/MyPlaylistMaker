@@ -2,17 +2,25 @@ package com.example.myplaylistmaker.db
 
 import com.example.myplaylistmaker.media.domain.Playlist
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
 class PlaylistConverter {
 
-    private fun playlistToString(list: MutableList<Int>): String {
-        return Gson().toJson(list)
+    fun playlistToString(list: MutableList<Int>): String {
+        return Gson().toJson(list.takeIf { it.isNotEmpty() } ?: emptyList<Int>())
     }
 
-    private fun stringToList(string: String): MutableList<Int> {
-        val type = object : TypeToken<MutableList<Int>>() {}.type
-        return Gson().fromJson(string, type)
+    fun stringToList(string: String): MutableList<Int> {
+        if (string.isBlank()) {
+            return mutableListOf()
+        }
+        return try {
+            val type = object : TypeToken<MutableList<Int>>() {}.type
+            Gson().fromJson(string, type) ?: mutableListOf()
+        } catch (e: JsonSyntaxException) {
+            mutableListOf()
+        }
     }
 
 

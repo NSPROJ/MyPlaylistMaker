@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/playListImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="312dp"
+            android:layout_height="312dp"
             android:layout_gravity="center"
             android:layout_marginStart="24dp"
             android:layout_marginTop="26dp"
@@ -40,7 +40,7 @@
             style="@style/CustomOutline"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="42dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/do_b"
             android:textSize="16sp"
@@ -58,7 +58,7 @@
             style="@style/CustomOutline"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="42dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/desc"

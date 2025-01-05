@@ -22,14 +22,25 @@ class PlaylistsFragment : Fragment() {
 
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding
-        get() = _binding ?: throw RuntimeException("FragmentPlaylistsBinding == null")
+        get() = _binding!!
 
     private lateinit var createButton: Button
     private lateinit var textPlaceholder: View
 
     private val viewModel by viewModel<PlaylistsViewModel>()
     private val playlists = mutableListOf<Playlist>()
-    private val playlistAdapter = PlaylistAdapter(playlists)
+    private val playlistAdapter = PlaylistAdapter(playlists) { playlist ->
+        val bundle = Bundle().apply {
+
+            putInt("playlistId", playlist.playlistId)
+            putString("playlistName", playlist.playlistName)
+            putString("description", playlist.description)
+            putInt("count", playlist.count)
+            putString("path", playlist.path)
+
+        }
+        findNavController().navigate(R.id.enterPlaylistFragment, bundle)
+    }
 
     companion object {
         fun newInstance(): PlaylistsFragment {
@@ -56,6 +67,7 @@ class PlaylistsFragment : Fragment() {
 
         createButton = binding.createButton
         textPlaceholder = binding.mediaPlaceholderTv
+
 
         createButton.setOnClickListener {
             findNavController().navigate(R.id.newPlayListFragment)

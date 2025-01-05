@@ -1,7 +1,6 @@
 package com.example.myplaylistmaker.media.ui.adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -17,7 +16,6 @@ class PlaylistViewHolder(private val binding: PlaylistItemBinding) :
 
     @SuppressLint("SetTextI18n")
     fun bind(playlist: Playlist) {
-        Log.d("PLAYLIST_PATH", "Loading image from: ${playlist.path}")
 
         Glide.with(itemView)
             .load(playlist.path)

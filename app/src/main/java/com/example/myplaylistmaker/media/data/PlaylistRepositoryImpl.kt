@@ -7,6 +7,9 @@ import com.example.myplaylistmaker.db.PlaylistsEntity
 import com.example.myplaylistmaker.media.domain.Playlist
 import com.example.myplaylistmaker.media.domain.repositories.PlaylistRepository
 import com.example.myplaylistmaker.search.domain.Track
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -17,7 +20,7 @@ class PlaylistRepositoryImpl(
     PlaylistRepository {
 
     private fun convertToPlaylist(playlist: List<PlaylistsEntity>): List<Playlist> {
-        return playlist.map { playlist -> playlistConverter.mapFromEntity(playlist) }
+        return playlist.map { entity -> playlistConverter.mapFromEntity(entity) }
     }
 
     override suspend fun insertPlaylist(playlist: Playlist) {
@@ -38,7 +41,6 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun updatePlaylist(track: Track, playlist: Playlist) {
-        playlist.trackId.add(track.trackId.toInt())
         playlist.count += 1
         val playlistEntity = playlistConverter.mapToEntity(playlist)
         appDataBase.playlistsDao().updatePlaylist(playlistEntity)
@@ -61,5 +63,62 @@ class PlaylistRepositoryImpl(
             track.isFavorite
         )
         appDataBase.playlistTracksDao().insertPlaylistTracks(trackToPlaylist)
+    }
+
+
+    override suspend fun getTracksForPlaylist(playlistId: Int): List<Track> {
+        val playlistEntity = appDataBase.playlistsDao().getPlaylistById(playlistId)
+        val trackIdsString = playlistEntity?.trackId ?: ""
+        val trackIds = try {
+            val type = object : TypeToken<MutableList<Int>>() {}.type
+            Gson().fromJson<MutableList<Int>>(trackIdsString, type)?.map { it.toLong() } ?: emptyList()
+        } catch (e: JsonSyntaxException) {
+            emptyList()
+        }
+
+        if (trackIds.isEmpty()) {
+            return emptyList()
+        }
+
+        return appDataBase.playlistTracksDao().getTracksByIds(trackIds)
+            .map { entity ->
+                Track(
+                    entity.trackId,
+                    entity.trackName,
+                    entity.artistName,
+                    entity.trackTimeMillis,
+                    entity.artworkUrl100,
+                    entity.collectionName,
+                    entity.releaseDate,
+                    entity.country,
+                    entity.primaryGenreName,
+                    entity.previewUrl,
+                    entity.isFavorite,
+                    entity.addedTime
+                )
+            }
+            .sortedByDescending { it.addedTime }
+    }
+
+    override suspend fun deleteTrackFromPlaylist(track: Track, playlistId: Int) {
+        val playlistEntity = appDataBase.playlistsDao().getPlaylistById(playlistId)
+        if (playlistEntity != null) {
+            val trackIdsString = playlistEntity.trackId
+            val trackIds = playlistConverter.stringToList(trackIdsString)
+            trackIds.remove(track.trackId.toInt())
+            val updatedTrackIdsString = playlistConverter.playlistToString(trackIds)
+            val updatedPlaylistEntity = playlistEntity.copy(
+                trackId = updatedTrackIdsString,
+                count = trackIds.size
+            )
+            appDataBase.playlistsDao().updatePlaylist(updatedPlaylistEntity)
+        }
+    }
+
+    override suspend fun getPlaylistById(playlistId: Int): Playlist {
+        return appDataBase.playlistsDao().getPlaylistById(playlistId)?.let { entity ->
+            playlistConverter.mapFromEntity(entity).copy(
+            )
+        }!!
     }
 }

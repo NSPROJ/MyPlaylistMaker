@@ -1,5 +1,6 @@
 package com.example.myplaylistmaker.di
 
+import com.example.myplaylistmaker.media.viewModels.EnterPlaylistViewModel
 import com.example.myplaylistmaker.media.viewModels.FavoritesViewModel
 import com.example.myplaylistmaker.media.viewModels.NewPlayViewModel
 import com.example.myplaylistmaker.media.viewModels.PlaylistsViewModel
@@ -20,5 +21,6 @@ val viewModelModule = module {
     viewModel { ThemeViewModel(get()) }
     viewModel { PlaylistsViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
-    viewModel { NewPlayViewModel(get(), get(), get()) }
+    viewModel { NewPlayViewModel(get(), get()) }
+    viewModel { EnterPlaylistViewModel(get()) }
 }

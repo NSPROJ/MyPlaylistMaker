@@ -15,4 +15,11 @@ interface PlaylistInteractor {
     suspend fun updatePlaylist(track: Track, playlist: Playlist)
 
     suspend fun insertTrack(track: Track)
+
+    suspend fun getTracksForPlaylist(playlistId: Int): List<Track>
+
+    suspend fun deleteTrackFromPlaylist(track: Track, playlistId: Int)
+
+    suspend fun getPlaylistById(playlistId: Int): Playlist?
+
 }
