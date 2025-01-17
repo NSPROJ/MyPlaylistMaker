@@ -27,14 +27,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.myplaylistmaker.R
 import com.example.myplaylistmaker.databinding.FragmentNewPlayBinding
-import com.example.myplaylistmaker.media.domain.Playlist
 import com.example.myplaylistmaker.media.viewModels.NewPlayViewModel
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
-
-@Suppress("DEPRECATION")
 class NewPlayFragment : Fragment() {
 
     private var _binding: FragmentNewPlayBinding? = null
@@ -44,12 +43,7 @@ class NewPlayFragment : Fragment() {
     private lateinit var playlistName: TextInputEditText
     private lateinit var playlistDescription: TextInputEditText
     private lateinit var playlistCreate: Button
-
-    var isPlaylistNameFilled = false
-    var isPlaylistDescriptionFilled = false
-
     private var isImageAdded = false
-
     private val viewModel by viewModel<NewPlayViewModel>()
 
     override fun onCreateView(
@@ -71,32 +65,56 @@ class NewPlayFragment : Fragment() {
             handleBackNavigation()
         }
 
-
-
         playlistName = binding.nameName
         playlistDescription = binding.description
         playlistCreate = binding.createPlaylist
         playlistImageView = binding.playListImage
 
+        val playlistId = arguments?.getInt("playlistId")
+        viewModel.loadPlaylist(playlistId)
+
+        viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+            playlist?.let {
+                playlistName.setText(it.playlistName)
+                playlistDescription.setText(it.description)
+                if (it.path != null) {
+                    loadImage(it.path)
+                    isImageAdded = true
+                }
+            }
+        }
+
+        viewModel.isEditing.observe(viewLifecycleOwner) { isEditing ->
+            if (isEditing) {
+                toolbar.title = getString(R.string.redact_playlist)
+                playlistCreate.text = getString(R.string.save)
+            } else {
+                toolbar.title = getString(R.string.new_playlist)
+                playlistCreate.text = getString(R.string.create)
+            }
+        }
+
+        viewModel.playlistName.observe(viewLifecycleOwner) { name ->
+            playlistName.setText(name)
+        }
+
+        viewModel.playlistDescription.observe(viewLifecycleOwner) { description ->
+            playlistDescription.setText(description)
+        }
+
+        viewModel.playlistCoverPath.observe(viewLifecycleOwner) { path ->
+            if (path != null) {
+                loadImage(path)
+                isImageAdded = true
+            }
+        }
+
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    Glide.with(requireContext())
-                        .load(uri)
-                        .apply(
-                            RequestOptions().transform(
-                                MultiTransformation(
-                                    CenterCrop(),
-                                    RoundedCorners(
-                                        transformDpToPx(8f)
-                                    )
-                                )
-                            )
-                        )
-                        .into(binding.playListImage)
+                    loadImage(uri)
                     lifecycleScope.launch {
                         saveImageToStorage(uri)
-
                     }
                 } else {
                     Toast.makeText(requireContext(), "Изображение не выбрано", Toast.LENGTH_SHORT)
@@ -105,41 +123,22 @@ class NewPlayFragment : Fragment() {
                 }
             }
 
-
-
         playlistCreate.setOnClickListener {
-            val playlist = Playlist(
-                0,
-                playlistName.text.toString(),
-                playlistDescription.text.toString(),
-                getPath(),
-                mutableListOf(),
-                0
-            )
-
-            viewModel.insertPlaylist(playlist)
-            val playlistName = playlistName.text ?: ""
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.playlist_str, playlistName),
-                Toast.LENGTH_LONG
-            ).show()
-            parentFragmentManager.popBackStack()
+            viewModel.setPlaylistName(playlistName.text.toString())
+            viewModel.setPlaylistDescription(playlistDescription.text.toString())
+            viewModel.savePlaylist()
+            findNavController().navigateUp()
         }
 
         playlistImageView.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            isImageAdded = true
         }
 
         playlistCreate.isEnabled = false
 
         playlistName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                isPlaylistNameFilled = !s.isNullOrBlank()
                 updateCreateButtonState()
             }
 
@@ -147,94 +146,106 @@ class NewPlayFragment : Fragment() {
         })
 
         playlistDescription.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                isPlaylistDescriptionFilled = !s.isNullOrBlank()
                 updateCreateButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
     }
 
-    private fun getPath(): String {
-        return viewModel.getImagePath(binding.toString())
+    private fun loadImage(imageSource: Any?) {
+        if (imageSource == null) return
+
+        val requestBuilder = Glide.with(requireContext())
+            .load(imageSource)
+            .placeholder(R.drawable.placeholder)
+            .apply(
+                RequestOptions().transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            transformDpToPx(8f)
+                        )
+                    )
+                )
+            )
+            .transition(DrawableTransitionOptions.withCrossFade())
+
+        requestBuilder.into(binding.playListImage)
     }
 
     private suspend fun saveImageToStorage(uri: Uri) {
-        viewModel.saveImage(uri, binding.toString())
-
+        val filename = System.currentTimeMillis().toString()
+        if (viewModel.saveImage(uri, filename)) {
+            viewModel.setPlaylistCoverPath(viewModel.getImagePath(filename))
+        }
     }
-        fun updateCreateButtonState() {
-            binding.createPlaylist.isEnabled = isPlaylistNameFilled || isPlaylistDescriptionFilled
-        }
 
-        override fun onAttach(context: Context) {
-            super.onAttach(context)
-            val scrollView = requireActivity().findViewById<ScrollView>(R.id.scrollView)
-            if (scrollView != null) {
-                scrollView.visibility = View.GONE
+    private fun updateCreateButtonState() {
+        binding.createPlaylist.isEnabled =
+            !playlistName.text.isNullOrBlank() || !playlistDescription.text.isNullOrBlank()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().findViewById<ScrollView>(R.id.scrollView)?.visibility = View.GONE
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().findViewById<ScrollView>(R.id.scrollView)?.visibility = View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.quit_question))
+            .setMessage(getString(R.string.lost_action))
+            .setPositiveButton(getString(R.string.close_toast)) { _, _ ->
+                findNavController().navigateUp()
             }
-        }
-
-        override fun onDetach() {
-            super.onDetach()
-            val scrollView = requireActivity().findViewById<ScrollView>(R.id.scrollView)
-            if (scrollView != null) {
-                scrollView.visibility = View.VISIBLE
-            }
-        }
-
-
-        override fun onDestroyView() {
-            super.onDestroyView()
-            _binding = null
-        }
-
-        private fun showConfirmationDialog() {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(getString(R.string.quit_question))
-            builder.setMessage(getString(R.string.lost_action))
-            builder.setPositiveButton(getString(R.string.close_toast)) { _, _ ->
-                parentFragmentManager.popBackStack()
-            }
-            builder.setNegativeButton("Отмена") { dialog, _ ->
+            .setNegativeButton("Отмена") { dialog, _ ->
                 dialog.dismiss()
             }
 
-            val alertDialog = builder.create()
-            alertDialog.show()
+        val alertDialog = builder.create()
 
+        alertDialog.setOnShowListener {
             val textColor =
                 if (isNightModeEnabled()) android.graphics.Color.WHITE else android.graphics.Color.BLACK
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(textColor)
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(textColor)
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(textColor)
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(textColor)
         }
+        alertDialog.show()
+    }
 
-        private fun isNightModeEnabled(): Boolean {
-            val currentNightMode =
-                resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            return currentNightMode == Configuration.UI_MODE_NIGHT_YES
-        }
+    private fun isNightModeEnabled(): Boolean {
+        val currentNightMode =
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
 
-        private fun handleBackNavigation() {
-            if (isPlaylistNameFilled || isPlaylistDescriptionFilled || isImageAdded) {
+    private fun handleBackNavigation() {
+        if (viewModel.isEditing.value == true) {
+            findNavController().navigateUp()
+        } else {
+            if (!playlistName.text.isNullOrBlank() || !playlistDescription.text.isNullOrBlank() || isImageAdded) {
                 showConfirmationDialog()
             } else {
-                if (parentFragmentManager.backStackEntryCount > 0) {
-                    parentFragmentManager.popBackStack()
-                } else {
-                    requireActivity().finish()
-                }
+                findNavController().navigateUp()
             }
         }
-
-        private fun transformDpToPx(dp: Float): Int {
-            return (dp * resources.displayMetrics.density + 0.5f).toInt()
-        }
     }
+
+    private fun transformDpToPx(dp: Float = 8.0f): Int {
+        return (dp * resources.displayMetrics.density + 0.5f).toInt()
+    }
+}
 
 

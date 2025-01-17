@@ -69,5 +69,24 @@
     <string name="no_choose">Изображение не выбрано</string>
     <string name="do_b">Название*</string>
     <string name="desc">Описание</string>
+    <string name="duration">Длительность</string>
+    <string name="count_tracks">Количество песен</string>
+    <string name="god">Год</string>
+    <string name="playlist_name">Название плейлиста</string>
+    <string name="share">Поделиться</string>
+    <string name="redactor">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="playlist_descr">Описание плейлиста</string>
+    <string name="delete_track">Удалить трек</string>
+    <string name="delete_question">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="delete_button">Удалить</string>
+    <string name="dismiss">Отмена</string>
+    <string name="no_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="delete_playlist_q">Хотите удалить плейлист?</string>
+    <string name="delete_quest">Удалить плейлист</string>
+    <string name="be_sure_to_delete">Хотите удалить плейлист</string>
+    <string name="save">Сохранить</string>
+    <string name="redact_playlist">Редактировать</string>
+    <string name="empty_playlist">В плейлисте нет треков</string>
 
 </resources>
